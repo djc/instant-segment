@@ -1,0 +1,12 @@
+[package]
+name = "word-segmenters"
+version = "0.1.0"
+authors = ["Dirkjan Ochtman <dirkjan@ochtman.nl>"]
+edition = "2018"
+license = "Apache-2.0"
+
+[dependencies]
+err-derive = "0.2.4"
+
+[dev-dependencies]
+once_cell = "1.4"
