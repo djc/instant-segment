@@ -35,65 +35,7 @@ impl Segmenter {
     /// Returns a list of words that is the best segmentation of `text`
     pub fn segment(&self, text: &str) -> Vec<String> {
         let clean = clean(text);
-        let mut words = vec![];
-        let mut memo = HashMap::new();
-
-        let (mut start, mut end) = (0, 0);
-        loop {
-            end = clean.len().min(end + SEGMENT_SIZE);
-            let prefix = &clean[start..end];
-            let window_words = self.search(&prefix, "<s>", &mut memo).1;
-
-            for word in &window_words[..window_words.len().saturating_sub(5)] {
-                start += word.len();
-                words.push((*word).into());
-            }
-
-            if end == clean.len() {
-                break;
-            }
-        }
-
-        let window_words = self.search(&clean[start..], "<s>", &mut memo).1;
-        words.extend(window_words.into_iter().map(|s| s.to_owned()));
-        words
-    }
-
-    /// Score `word` in the context of `previous` word
-    fn search<'a, 'b: 'a>(
-        &self,
-        text: &'b str,
-        previous: &str,
-        memo: &'a mut MemoMap<'b>,
-    ) -> (f64, Vec<&'b str>) {
-        if text.is_empty() {
-            return (0.0, vec![]);
-        }
-
-        let mut best = (f64::MIN, vec![]);
-        for (prefix, suffix) in TextDivider::new(text, self.limit) {
-            let prefix_score = self.score(prefix, Some(previous)).log10();
-            let pair = (suffix, prefix);
-
-            let (suffix_score, suffix_words) = match memo.get(&pair) {
-                Some((score, words)) => (*score, words.as_slice()),
-                None => {
-                    let (suffix_score, suffix_words) = self.search(&suffix, prefix, memo);
-                    let value = memo.entry(pair).or_insert((suffix_score, suffix_words));
-                    (suffix_score, value.1.as_slice())
-                }
-            };
-
-            let score = prefix_score + suffix_score;
-            if score > best.0 {
-                best.0 = score;
-                best.1.clear();
-                best.1.push(prefix);
-                best.1.extend(suffix_words);
-            }
-        }
-
-        best
+        SegmentState::new(&clean, &self).run()
     }
 
     fn score(&self, word: &str, previous: Option<&str>) -> f64 {
@@ -127,6 +69,83 @@ impl Segmenter {
     /// Customize the relative score by setting the `total`
     pub fn set_total(&mut self, total: f64) {
         self.total = total;
+    }
+}
+
+struct SegmentState<'a> {
+    data: &'a Segmenter,
+    text: &'a str,
+    memo: HashMap<(&'a str, &'a str), (f64, Vec<&'a str>)>,
+    result: Vec<String>,
+}
+
+impl<'a> SegmentState<'a> {
+    fn new(text: &'a str, data: &'a Segmenter) -> Self {
+        Self {
+            data,
+            text,
+            memo: HashMap::new(),
+            result: Vec::new(),
+        }
+    }
+
+    /// Returns a list of words that is the best segmentation of `text`
+    pub fn run(mut self) -> Vec<String> {
+        let (mut start, mut end) = (0, 0);
+        loop {
+            end = self.text.len().min(end + SEGMENT_SIZE);
+            let prefix = &self.text[start..end];
+            let window_words = self.search(&prefix, "<s>").1;
+
+            for word in &window_words[..window_words.len().saturating_sub(5)] {
+                start += word.len();
+                self.result.push((*word).into());
+            }
+
+            if end == self.text.len() {
+                break;
+            }
+        }
+
+        let window_words = self.search(&self.text[start..], "<s>").1;
+        self.result
+            .extend(window_words.into_iter().map(|s| s.to_owned()));
+        self.result
+    }
+
+    /// Score `word` in the context of `previous` word
+    fn search(&mut self, text: &'a str, previous: &str) -> (f64, Vec<&'a str>) {
+        if text.is_empty() {
+            return (0.0, vec![]);
+        }
+
+        let mut best = (f64::MIN, vec![]);
+        for (prefix, suffix) in TextDivider::new(text, self.data.limit) {
+            let prefix_score = self.data.score(prefix, Some(previous)).log10();
+            let pair = (suffix, prefix);
+
+            let (suffix_score, suffix_words) = match self.memo.get(&pair) {
+                Some((score, words)) => (*score, words.as_slice()),
+                None => {
+                    let (suffix_score, suffix_words) = self.search(&suffix, prefix);
+                    let value = self
+                        .memo
+                        .entry(pair)
+                        .or_insert((suffix_score, suffix_words));
+                    (suffix_score, value.1.as_slice())
+                }
+            };
+
+            let score = prefix_score + suffix_score;
+            if score > best.0 {
+                best.0 = score;
+                best.1.clear();
+                best.1.push(prefix);
+                best.1.extend(suffix_words);
+            }
+        }
+
+        best
     }
 }
 
@@ -234,8 +253,6 @@ pub enum ParseError {
     #[error(display = "{}", _0)]
     String(String),
 }
-
-type MemoMap<'a> = HashMap<(&'a str, &'a str), (f64, Vec<&'a str>)>;
 
 const DEFAULT_LIMIT: usize = 24;
 const DEFAULT_TOTAL: f64 = 1_024_908_267_229.0;
