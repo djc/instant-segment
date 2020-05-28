@@ -1,5 +1,4 @@
 use std::{
-    collections::HashMap,
     fs::File,
     io::{self, BufRead, BufReader},
     num::ParseIntError,
@@ -8,6 +7,7 @@ use std::{
     str::FromStr,
 };
 
+use ahash::AHashMap as HashMap;
 use err_derive::Error;
 
 pub struct Segmenter {
