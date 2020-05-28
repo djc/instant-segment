@@ -60,7 +60,12 @@ impl Segmenter {
     }
 
     /// Score `word` in the context of `previous` word
-    fn search(&self, text: &str, previous: &str, memo: &mut MemoMap) -> (f64, Vec<String>) {
+    fn search<'a, 'b: 'a>(
+        &self,
+        text: &'b str,
+        previous: &str,
+        memo: &'a mut MemoMap<'b>,
+    ) -> (f64, Vec<String>) {
         if text.is_empty() {
             return (0.0, vec![]);
         }
@@ -68,7 +73,7 @@ impl Segmenter {
         let mut best = (f64::MIN, vec![]);
         for (prefix, suffix) in TextDivider::new(text, self.limit) {
             let prefix_score = self.score(prefix, Some(previous)).log10();
-            let pair = (suffix.to_owned(), prefix.to_owned());
+            let pair = (suffix, prefix);
 
             let (suffix_score, suffix_words) = match memo.get(&pair) {
                 Some((score, words)) => (*score, words.clone()),
@@ -230,7 +235,7 @@ pub enum ParseError {
     String(String),
 }
 
-type MemoMap = HashMap<(String, String), (f64, Vec<String>)>;
+type MemoMap<'a> = HashMap<(&'a str, &'a str), (f64, Vec<String>)>;
 
 const DEFAULT_LIMIT: usize = 24;
 const DEFAULT_TOTAL: f64 = 1_024_908_267_229.0;
