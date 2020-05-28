@@ -46,7 +46,7 @@ impl Segmenter {
 
             for word in &window_words[..window_words.len().saturating_sub(5)] {
                 start += word.len();
-                words.push(word.into());
+                words.push((*word).into());
             }
 
             if end == clean.len() {
@@ -54,8 +54,8 @@ impl Segmenter {
             }
         }
 
-        let mut window_words = self.search(&clean[start..], "<s>", &mut memo).1;
-        words.append(&mut window_words);
+        let window_words = self.search(&clean[start..], "<s>", &mut memo).1;
+        words.extend(window_words.into_iter().map(|s| s.to_owned()));
         words
     }
 
@@ -65,7 +65,7 @@ impl Segmenter {
         text: &'b str,
         previous: &str,
         memo: &'a mut MemoMap<'b>,
-    ) -> (f64, Vec<String>) {
+    ) -> (f64, Vec<&'b str>) {
         if text.is_empty() {
             return (0.0, vec![]);
         }
@@ -76,11 +76,11 @@ impl Segmenter {
             let pair = (suffix, prefix);
 
             let (suffix_score, suffix_words) = match memo.get(&pair) {
-                Some((score, words)) => (*score, words.clone()),
+                Some((score, words)) => (*score, words.as_slice()),
                 None => {
                     let (suffix_score, suffix_words) = self.search(&suffix, prefix, memo);
-                    memo.insert(pair, (suffix_score, suffix_words.clone()));
-                    (suffix_score, suffix_words)
+                    let value = memo.entry(pair).or_insert((suffix_score, suffix_words));
+                    (suffix_score, value.1.as_slice())
                 }
             };
 
@@ -88,7 +88,7 @@ impl Segmenter {
             if score > best.0 {
                 best.0 = score;
                 best.1.clear();
-                best.1.push(prefix.to_owned());
+                best.1.push(prefix);
                 best.1.extend(suffix_words);
             }
         }
@@ -235,7 +235,7 @@ pub enum ParseError {
     String(String),
 }
 
-type MemoMap<'a> = HashMap<(&'a str, &'a str), (f64, Vec<String>)>;
+type MemoMap<'a> = HashMap<(&'a str, &'a str), (f64, Vec<&'a str>)>;
 
 const DEFAULT_LIMIT: usize = 24;
 const DEFAULT_TOTAL: f64 = 1_024_908_267_229.0;
