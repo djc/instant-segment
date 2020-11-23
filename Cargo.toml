@@ -4,6 +4,10 @@ version = "0.1.0"
 authors = ["Dirkjan Ochtman <dirkjan@ochtman.nl>"]
 edition = "2018"
 license = "Apache-2.0"
+description = "Fast English word segmentation"
+homepage = "https://github.com/InstantDomainSearch/word-segmenters"
+repository = "https://github.com/InstantDomainSearch/word-segmenters"
+documentation = "https://docs.rs/word-segmenters"
 
 [dependencies]
 ahash = "0.3.5"
