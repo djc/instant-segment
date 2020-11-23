@@ -10,7 +10,7 @@ repository = "https://github.com/InstantDomainSearch/word-segmenters"
 documentation = "https://docs.rs/word-segmenters"
 
 [dependencies]
-ahash = "0.3.5"
+ahash = "0.5.7"
 err-derive = "0.2.4"
 
 [dev-dependencies]
