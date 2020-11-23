@@ -14,5 +14,6 @@ fn short(bench: &mut Bencher) {
     )))
     .unwrap();
 
-    bench.iter(|| segmenter.segment("thisisatest"));
+    let mut out = Vec::new();
+    bench.iter(|| segmenter.segment("thisisatest", &mut out));
 }

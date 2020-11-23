@@ -8,6 +8,7 @@ use std::{
 };
 
 use ahash::AHashMap as HashMap;
+use smartstring::alias::String;
 use thiserror::Error;
 
 pub struct Segmenter {
@@ -32,10 +33,10 @@ impl Segmenter {
         })
     }
 
-    /// Returns a list of words that is the best segmentation of `text`
-    pub fn segment(&self, text: &str) -> Vec<String> {
+    /// Appends list of words that is the best segmentation of `text` to `out`
+    pub fn segment(&self, text: &str, out: &mut Vec<String>) {
         let clean = clean(text);
-        SegmentState::new(&clean, &self).run()
+        SegmentState::new(&clean, &self, out).run()
     }
 
     fn score(&self, word: &str, previous: Option<&str>) -> f64 {
@@ -76,21 +77,21 @@ struct SegmentState<'a> {
     data: &'a Segmenter,
     text: &'a str,
     memo: HashMap<(&'a str, &'a str), (f64, Vec<&'a str>)>,
-    result: Vec<String>,
+    result: &'a mut Vec<String>,
 }
 
 impl<'a> SegmentState<'a> {
-    fn new(text: &'a str, data: &'a Segmenter) -> Self {
+    fn new(text: &'a str, data: &'a Segmenter, result: &'a mut Vec<String>) -> Self {
         Self {
             data,
             text,
             memo: HashMap::new(),
-            result: Vec::new(),
+            result,
         }
     }
 
     /// Returns a list of words that is the best segmentation of `text`
-    pub fn run(mut self) -> Vec<String> {
+    fn run(mut self) {
         let (mut start, mut end) = (0, 0);
         loop {
             end = self.text.len().min(end + SEGMENT_SIZE);
@@ -109,8 +110,7 @@ impl<'a> SegmentState<'a> {
 
         let window_words = self.search(&self.text[start..], "<s>").1;
         self.result
-            .extend(window_words.into_iter().map(|s| s.to_owned()));
-        self.result
+            .extend(window_words.into_iter().map(|s| s.into()));
     }
 
     /// Score `word` in the context of `previous` word
@@ -164,11 +164,11 @@ pub fn parse_unigrams<R: BufRead>(
             let ln = ln?;
             let split = ln
                 .find('\t')
-                .ok_or_else(|| ParseError::String(format!("no tab found in {:?}:{}", name, i)))?;
+                .ok_or_else(|| format!("no tab found in {:?}:{}", name, i))?;
 
-            let word = ln[..split].to_owned();
+            let word = ln[..split].into();
             let p = usize::from_str(&ln[split + 1..])
-                .map_err(|e| ParseError::String(format!("error at {:?}:{}: {}", name, i, e)))?;
+                .map_err(|e| format!("error at {:?}:{}: {}", name, i, e))?;
             Ok((word, p as f64))
         })
         .collect()
@@ -189,17 +189,17 @@ pub fn parse_bigrams<R: BufRead>(
             let ln = ln?;
             let word_split = ln
                 .find(' ')
-                .ok_or_else(|| ParseError::String(format!("no space found in {:?}:{}", name, i)))?;
+                .ok_or_else(|| format!("no space found in {:?}:{}", name, i))?;
             let score_split = ln[word_split + 1..]
                 .find('\t')
-                .ok_or_else(|| ParseError::String(format!("no tab found in {:?}:{}", name, i)))?
+                .ok_or_else(|| format!("no tab found in {:?}:{}", name, i))?
                 + word_split
                 + 1;
 
-            let word1 = ln[..word_split].to_owned();
-            let word2 = ln[word_split + 1..score_split].to_owned();
+            let word1 = ln[..word_split].into();
+            let word2 = ln[word_split + 1..score_split].into();
             let p = usize::from_str(&ln[score_split + 1..])
-                .map_err(|e| ParseError::String(format!("error at {:?}:{}: {}", name, i, e)))?;
+                .map_err(|e| format!("error at {:?}:{}: {}", name, i, e))?;
 
             Ok(((word1, word2), p as f64))
         })
@@ -254,6 +254,12 @@ pub enum ParseError {
     String(String),
 }
 
+impl From<std::string::String> for ParseError {
+    fn from(s: std::string::String) -> Self {
+        ParseError::String(s.into())
+    }
+}
+
 const DEFAULT_LIMIT: usize = 24;
 const DEFAULT_TOTAL: f64 = 1_024_908_267_229.0;
 const SEGMENT_SIZE: usize = 250;
@@ -262,6 +268,6 @@ const SEGMENT_SIZE: usize = 250;
 mod tests {
     #[test]
     fn test_clean() {
-        assert_eq!(super::clean("Can't buy me love!"), "cantbuymelove");
+        assert_eq!(&super::clean("Can't buy me love!"), "cantbuymelove");
     }
 }

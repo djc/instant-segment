@@ -6,7 +6,10 @@ use word_segmenters::Segmenter;
 
 macro_rules! assert_segments {
     ($list:expr) => {
-        assert_eq!(SEGMENTER.segment(&$list.join("")), $list);
+        let mut out = Vec::new();
+        SEGMENTER.segment(&$list.join(""), &mut out);
+        let cmp = out.iter().map(|s| &*s).collect::<Vec<_>>();
+        assert_eq!(cmp, $list);
     };
 }
 

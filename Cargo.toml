@@ -11,6 +11,7 @@ documentation = "https://docs.rs/word-segmenters"
 
 [dependencies]
 ahash = "0.6.1"
+smartstring = "0.2.5"
 thiserror = "1.0.22"
 
 [dev-dependencies]
