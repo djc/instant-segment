@@ -8,7 +8,7 @@ use std::{
 };
 
 use ahash::AHashMap as HashMap;
-use err_derive::Error;
+use thiserror::Error;
 
 pub struct Segmenter {
     unigrams: HashMap<String, f64>,
@@ -246,11 +246,11 @@ fn clean(s: &str) -> String {
 
 #[derive(Debug, Error)]
 pub enum ParseError {
-    #[error(display = "I/O error: {}", _0)]
-    Io(#[source] io::Error),
-    #[error(display = "integer parsing error: {}", _0)]
-    ParseInt(#[source] ParseIntError),
-    #[error(display = "{}", _0)]
+    #[error("I/O error: {0}")]
+    Io(#[from] io::Error),
+    #[error("integer parsing error: {0}")]
+    ParseInt(#[from] ParseIntError),
+    #[error("{0}")]
     String(String),
 }
 
