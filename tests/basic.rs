@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+#![cfg(feature = "__test_data")]
 
 use once_cell::sync::Lazy;
 
@@ -170,10 +170,4 @@ fn test_segment_12() {
     ]);
 }
 
-static SEGMENTER: Lazy<Segmenter> = Lazy::new(|| {
-    Segmenter::from_dir(&PathBuf::from(format!(
-        "{}/data",
-        env!("CARGO_MANIFEST_DIR")
-    )))
-    .unwrap()
-});
+static SEGMENTER: Lazy<Segmenter> = Lazy::new(|| word_segmenters::test_data::segmenter());

@@ -9,6 +9,9 @@ homepage = "https://github.com/InstantDomainSearch/word-segmenters"
 repository = "https://github.com/InstantDomainSearch/word-segmenters"
 documentation = "https://docs.rs/word-segmenters"
 
+[features]
+__test_data = []
+
 [dependencies]
 ahash = "0.6.1"
 smartstring = "0.2.5"

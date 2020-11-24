@@ -1,15 +1,14 @@
-use std::{
-    fs::File,
-    io::{self, BufRead, BufReader},
-    num::ParseIntError,
-    ops::Range,
-    path::Path,
-    str::FromStr,
-};
+use std::error::Error;
+use std::io;
+use std::num::ParseIntError;
+use std::ops::Range;
 
 use ahash::AHashMap as HashMap;
 use smartstring::alias::String;
 use thiserror::Error;
+
+#[cfg(feature = "__test_data")]
+pub mod test_data;
 
 pub struct Segmenter {
     unigrams: HashMap<String, f64>,
@@ -19,15 +18,18 @@ pub struct Segmenter {
 }
 
 impl Segmenter {
-    /// Create `Segmenter` from files in the given directory
+    /// Create `Segmenter` from the given iterators
     ///
-    /// Reads from `unigrams.txt` and `bigrams.txt` in `dir`.
-    pub fn from_dir(dir: &Path) -> Result<Self, ParseError> {
-        let uni_file = dir.join("unigrams.txt");
-        let bi_file = dir.join("bigrams.txt");
+    /// Note: the `String` types used in this API are defined in the `smartstring` crate. Any
+    /// `&str` or `String` can be converted into the `String` used here by calling `into()` on it.
+    pub fn from_iters<'a, U, B>(unigrams: U, bigrams: B) -> Result<Self, Box<dyn Error>>
+    where
+        U: Iterator<Item = Result<(String, f64), Box<dyn Error>>>,
+        B: Iterator<Item = Result<((String, String), f64), Box<dyn Error>>>,
+    {
         Ok(Self {
-            unigrams: parse_unigrams(BufReader::new(File::open(&uni_file)?), uni_file.to_str())?,
-            bigrams: parse_bigrams(BufReader::new(File::open(&bi_file)?), bi_file.to_str())?,
+            unigrams: unigrams.collect::<Result<HashMap<_, _>, _>>()?,
+            bigrams: bigrams.collect::<Result<HashMap<_, _>, _>>()?,
             limit: DEFAULT_LIMIT,
             total: DEFAULT_TOTAL,
         })
@@ -149,63 +151,6 @@ impl<'a> SegmentState<'a> {
     }
 }
 
-/// Parse unigrams from the `reader` (format: `<word>\t<int>\n`)
-///
-/// The optional `name` argument may be used to provide a source name for error messages.
-pub fn parse_unigrams<R: BufRead>(
-    reader: R,
-    name: Option<&str>,
-) -> Result<HashMap<String, f64>, ParseError> {
-    let name = name.unwrap_or("(unnamed)");
-    reader
-        .lines()
-        .enumerate()
-        .map(|(i, ln)| {
-            let ln = ln?;
-            let split = ln
-                .find('\t')
-                .ok_or_else(|| format!("no tab found in {:?}:{}", name, i))?;
-
-            let word = ln[..split].into();
-            let p = usize::from_str(&ln[split + 1..])
-                .map_err(|e| format!("error at {:?}:{}: {}", name, i, e))?;
-            Ok((word, p as f64))
-        })
-        .collect()
-}
-
-/// Parse bigrams from the `reader` (format: `<word-1> <word-2>\t<int>\n`)
-///
-/// The optional `name` argument may be used to provide a source name for error messages.
-pub fn parse_bigrams<R: BufRead>(
-    reader: R,
-    name: Option<&str>,
-) -> Result<HashMap<(String, String), f64>, ParseError> {
-    let name = name.unwrap_or("(unnamed)");
-    reader
-        .lines()
-        .enumerate()
-        .map(|(i, ln)| {
-            let ln = ln?;
-            let word_split = ln
-                .find(' ')
-                .ok_or_else(|| format!("no space found in {:?}:{}", name, i))?;
-            let score_split = ln[word_split + 1..]
-                .find('\t')
-                .ok_or_else(|| format!("no tab found in {:?}:{}", name, i))?
-                + word_split
-                + 1;
-
-            let word1 = ln[..word_split].into();
-            let word2 = ln[word_split + 1..score_split].into();
-            let p = usize::from_str(&ln[score_split + 1..])
-                .map_err(|e| format!("error at {:?}:{}: {}", name, i, e))?;
-
-            Ok(((word1, word2), p as f64))
-        })
-        .collect()
-}
-
 /// Iterator that yields `(prefix, suffix)` pairs from `text`
 struct TextDivider<'a> {
     text: &'a str,
@@ -265,7 +210,7 @@ const DEFAULT_TOTAL: f64 = 1_024_908_267_229.0;
 const SEGMENT_SIZE: usize = 250;
 
 #[cfg(test)]
-mod tests {
+pub mod tests {
     #[test]
     fn test_clean() {
         assert_eq!(&super::clean("Can't buy me love!"), "cantbuymelove");
