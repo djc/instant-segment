@@ -170,4 +170,4 @@ fn test_segment_12() {
     ]);
 }
 
-static SEGMENTER: Lazy<Segmenter> = Lazy::new(|| word_segmenters::test_data::segmenter());
+static SEGMENTER: Lazy<Segmenter> = Lazy::new(word_segmenters::test_data::segmenter);
