@@ -75,7 +75,7 @@ impl Segmenter {
 struct SegmentState<'a> {
     data: &'a Segmenter,
     text: &'a str,
-    memo: HashMap<(&'a str, &'a str), (f64, Vec<&'a str>)>,
+    memo: HashMap<(&'a str, &'a str), (f64, Vec<usize>)>,
     result: &'a mut Vec<String>,
 }
 
@@ -95,11 +95,11 @@ impl<'a> SegmentState<'a> {
         loop {
             end = self.text.len().min(end + SEGMENT_SIZE);
             let prefix = &self.text[start..end];
-            let window_words = self.search(&prefix, None).1;
+            let window_splits = self.search(&prefix, None).1;
 
-            for word in &window_words[..window_words.len().saturating_sub(5)] {
-                start += word.len();
-                self.result.push((*word).into());
+            for split in &window_splits[..window_splits.len().saturating_sub(5)] {
+                self.result.push(self.text[start..start + split].into());
+                start += split;
             }
 
             if end == self.text.len() {
@@ -107,13 +107,15 @@ impl<'a> SegmentState<'a> {
             }
         }
 
-        let window_words = self.search(&self.text[start..], None).1;
-        self.result
-            .extend(window_words.into_iter().map(|s| s.into()));
+        let window_splits = self.search(&self.text[start..], None).1;
+        for split in window_splits {
+            self.result.push(self.text[start..start + split].into());
+            start += split;
+        }
     }
 
     /// Score `word` in the context of `previous` word
-    fn search(&mut self, text: &'a str, previous: Option<&str>) -> (f64, Vec<&'a str>) {
+    fn search(&mut self, text: &'a str, previous: Option<&str>) -> (f64, Vec<usize>) {
         if text.is_empty() {
             return (0.0, vec![]);
         }
@@ -124,14 +126,14 @@ impl<'a> SegmentState<'a> {
             let prefix_score = self.data.score(prefix, previous).log10();
             let pair = (suffix, prefix);
 
-            let (suffix_score, suffix_words) = match self.memo.get(&pair) {
-                Some((score, words)) => (*score, words.as_slice()),
+            let (suffix_score, suffix_splits) = match self.memo.get(&pair) {
+                Some((score, splits)) => (*score, splits.as_slice()),
                 None => {
-                    let (suffix_score, suffix_words) = self.search(&suffix, Some(prefix));
+                    let (suffix_score, suffix_splits) = self.search(&suffix, Some(prefix));
                     let value = self
                         .memo
                         .entry(pair)
-                        .or_insert((suffix_score, suffix_words));
+                        .or_insert((suffix_score, suffix_splits));
                     (suffix_score, value.1.as_slice())
                 }
             };
@@ -140,8 +142,8 @@ impl<'a> SegmentState<'a> {
             if score > best.0 {
                 best.0 = score;
                 best.1.clear();
-                best.1.push(prefix);
-                best.1.extend(suffix_words);
+                best.1.push(split);
+                best.1.extend(suffix_splits);
             }
         }
 
