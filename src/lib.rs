@@ -1,6 +1,7 @@
 use std::error::Error;
 use std::io;
 use std::num::ParseIntError;
+use std::ops::Range;
 
 use ahash::AHashMap as HashMap;
 use smartstring::alias::String;
@@ -75,7 +76,8 @@ impl Segmenter {
 struct SegmentState<'a> {
     data: &'a Segmenter,
     text: &'a str,
-    memo: HashMap<(&'a str, &'a str), (f64, Vec<usize>)>,
+    memo: HashMap<(&'a str, &'a str), (f64, Range<usize>)>,
+    split_cache: Vec<usize>,
     result: &'a mut Vec<String>,
 }
 
@@ -85,6 +87,7 @@ impl<'a> SegmentState<'a> {
             data,
             text,
             memo: HashMap::new(),
+            split_cache: Vec::new(),
             result,
         }
     }
@@ -127,14 +130,14 @@ impl<'a> SegmentState<'a> {
             let pair = (suffix, prefix);
 
             let (suffix_score, suffix_splits) = match self.memo.get(&pair) {
-                Some((score, splits)) => (*score, splits.as_slice()),
+                Some((score, splits)) => (*score, &self.split_cache[splits.start..splits.end]),
                 None => {
                     let (suffix_score, suffix_splits) = self.search(&suffix, Some(prefix));
-                    let value = self
-                        .memo
-                        .entry(pair)
-                        .or_insert((suffix_score, suffix_splits));
-                    (suffix_score, value.1.as_slice())
+                    let start = self.split_cache.len();
+                    self.split_cache.extend(&suffix_splits);
+                    let end = self.split_cache.len();
+                    self.memo.insert(pair, (suffix_score, start..end));
+                    (suffix_score, &self.split_cache[start..end])
                 }
             };
 
