@@ -42,25 +42,23 @@ impl Segmenter {
     }
 
     fn score(&self, word: &str, previous: Option<&str>) -> f64 {
-        match previous {
-            None => match self.unigrams.get(word) {
-                // Probabibility of the given word
-                Some(p) => p / self.total,
-                // Penalize words not found in the unigrams according
-                // to their length, a crucial heuristic.
-                None => 10.0 / (self.total * 10.0f64.powf(word.len() as f64)),
-            },
-            Some(prev) => match (
-                self.bigrams.get(&(prev.into(), word.into())),
-                self.unigrams.get(prev),
-            ) {
-                // Conditional probability of the word given the previous
-                // word. The technical name is "stupid backoff" and it's
-                // not a probability distribution but it works well in practice.
-                (Some(pb), Some(_)) => pb / self.total / self.score(prev, None),
-                // Fall back to using the unigram probability
-                _ => self.score(word, None),
-            },
+        if let Some(prev) = previous {
+            if let Some(pb) = self.bigrams.get(&(prev.into(), word.into())) {
+                if self.unigrams.get(prev).is_some() {
+                    // Conditional probability of the word given the previous
+                    // word. The technical name is "stupid backoff" and it's
+                    // not a probability distribution but it works well in practice.
+                    return pb / self.total / self.score(prev, None);
+                }
+            }
+        }
+
+        match self.unigrams.get(word) {
+            // Probability of the given word
+            Some(p) => p / self.total,
+            // Penalize words not found in the unigrams according
+            // to their length, a crucial heuristic.
+            None => 10.0 / (self.total * 10.0f64.powf(word.len() as f64)),
         }
     }
 
