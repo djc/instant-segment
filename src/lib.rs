@@ -96,7 +96,7 @@ impl<'a> SegmentState<'a> {
         loop {
             end = self.text.len().min(end + SEGMENT_SIZE);
             let prefix = &self.text[start..end];
-            let window_words = self.search(&prefix, "<s>").1;
+            let window_words = self.search(&prefix, None).1;
 
             for word in &window_words[..window_words.len().saturating_sub(5)] {
                 start += word.len();
@@ -108,26 +108,26 @@ impl<'a> SegmentState<'a> {
             }
         }
 
-        let window_words = self.search(&self.text[start..], "<s>").1;
+        let window_words = self.search(&self.text[start..], None).1;
         self.result
             .extend(window_words.into_iter().map(|s| s.into()));
     }
 
     /// Score `word` in the context of `previous` word
-    fn search(&mut self, text: &'a str, previous: &str) -> (f64, Vec<&'a str>) {
+    fn search(&mut self, text: &'a str, previous: Option<&str>) -> (f64, Vec<&'a str>) {
         if text.is_empty() {
             return (0.0, vec![]);
         }
 
         let mut best = (f64::MIN, vec![]);
         for (prefix, suffix) in TextDivider::new(text, self.data.limit) {
-            let prefix_score = self.data.score(prefix, Some(previous)).log10();
+            let prefix_score = self.data.score(prefix, previous).log10();
             let pair = (suffix, prefix);
 
             let (suffix_score, suffix_words) = match self.memo.get(&pair) {
                 Some((score, words)) => (*score, words.as_slice()),
                 None => {
-                    let (suffix_score, suffix_words) = self.search(&suffix, prefix);
+                    let (suffix_score, suffix_words) = self.search(&suffix, Some(prefix));
                     let value = self
                         .memo
                         .entry(pair)
