@@ -22,7 +22,7 @@ impl Segmenter {
     ///
     /// Note: the `String` types used in this API are defined in the `smartstring` crate. Any
     /// `&str` or `String` can be converted into the `String` used here by calling `into()` on it.
-    pub fn from_iters<'a, U, B>(unigrams: U, bigrams: B) -> Result<Self, Box<dyn Error>>
+    pub fn from_iters<U, B>(unigrams: U, bigrams: B) -> Result<Self, Box<dyn Error>>
     where
         U: Iterator<Item = Result<(String, f64), Box<dyn Error>>>,
         B: Iterator<Item = Result<((String, String), f64), Box<dyn Error>>>,
