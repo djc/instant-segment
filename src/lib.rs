@@ -1,7 +1,6 @@
 use std::error::Error;
 use std::io;
 use std::num::ParseIntError;
-use std::ops::Range;
 
 use ahash::AHashMap as HashMap;
 use smartstring::alias::String;
@@ -120,7 +119,8 @@ impl<'a> SegmentState<'a> {
         }
 
         let mut best = (f64::MIN, vec![]);
-        for (prefix, suffix) in TextDivider::new(text, self.data.limit) {
+        for split in 1..(text.len().min(self.data.limit) + 1) {
+            let (prefix, suffix) = text.split_at(split);
             let prefix_score = self.data.score(prefix, previous).log10();
             let pair = (suffix, prefix);
 
@@ -146,31 +146,6 @@ impl<'a> SegmentState<'a> {
         }
 
         best
-    }
-}
-
-/// Iterator that yields `(prefix, suffix)` pairs from `text`
-struct TextDivider<'a> {
-    text: &'a str,
-    split: Range<usize>,
-}
-
-impl<'a> TextDivider<'a> {
-    fn new(text: &'a str, limit: usize) -> Self {
-        TextDivider {
-            text,
-            split: 1..(text.len().min(limit) + 1),
-        }
-    }
-}
-
-impl<'a> Iterator for TextDivider<'a> {
-    type Item = (&'a str, &'a str);
-
-    fn next(&mut self) -> Option<Self::Item> {
-        self.split
-            .next()
-            .map(|split| (&self.text[..split], &self.text[split..]))
     }
 }
 
