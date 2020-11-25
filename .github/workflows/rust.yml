@@ -53,7 +53,7 @@ jobs:
         if: always()
         with:
           command: clippy
-          args: --workspace --all-targets -- -D warnings
+          args: --workspace --all-targets --all-features -- -D warnings
 
   audit:
     runs-on: ubuntu-latest
