@@ -2,3 +2,4 @@
 allow-osi-fsf-free = "either"
 copyleft = "deny"
 private = { ignore = true }
+allow = ["MPL-2.0"]
