@@ -116,7 +116,12 @@ impl<'a> SegmentState<'a> {
     }
 
     /// Score `word` in the context of `previous` word
-    fn search(&mut self, level: usize, range: Range<usize>, previous: Option<&str>) -> (f64, bool) {
+    fn search(
+        &mut self,
+        level: usize,
+        range: Range<usize>,
+        previous: Option<Range<usize>>,
+    ) -> (f64, bool) {
         if range.is_empty() {
             return (0.0, false);
         }
@@ -124,15 +129,15 @@ impl<'a> SegmentState<'a> {
         let mut best = f64::MIN;
         for split in 1..(range.len().min(self.data.limit) + 1) {
             let (start, split, end) = (range.start, range.start + split, range.end);
-            let prefix = &self.text[start..split];
-            let prefix_score = self.data.score(prefix, previous).log10();
+            let previous = previous.clone().map(|range| &self.text[range]);
+            let prefix_score = self.data.score(&self.text[start..split], previous).log10();
 
             let pair = (split..end, start..split);
             let (suffix_score, suffix_splits) = match self.memo.get(&pair) {
                 Some((score, splits)) => (*score, &self.split_cache[splits.start..splits.end]),
                 None => {
                     let (suffix_score, has_splits) =
-                        self.search(level + 1, split..end, Some(prefix));
+                        self.search(level + 1, split..end, Some(start..split));
                     let start = self.split_cache.len();
                     self.split_cache.extend(if has_splits {
                         &self.best[level + 1][..]
