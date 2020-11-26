@@ -99,8 +99,7 @@ impl<'a> SegmentState<'a> {
         let (mut start, mut end) = (0, 0);
         while end < self.text.len() {
             end = self.text.len().min(end + SEGMENT_SIZE);
-            let prefix = &self.text[start..end];
-            if !self.search(0, start, &prefix, None).1 {
+            if !self.search(0, start..end, None).1 {
                 continue;
             }
 
@@ -117,20 +116,17 @@ impl<'a> SegmentState<'a> {
     }
 
     /// Score `word` in the context of `previous` word
-    fn search(
-        &mut self,
-        level: usize,
-        start: usize,
-        text: &'a str,
-        previous: Option<&str>,
-    ) -> (f64, bool) {
-        if text.is_empty() {
+    fn search(&mut self, level: usize, range: Range<usize>, previous: Option<&str>) -> (f64, bool) {
+        if range.is_empty() {
             return (0.0, false);
         }
 
         let mut best = f64::MIN;
-        for split in 1..(text.len().min(self.data.limit) + 1) {
-            let (prefix, suffix) = text.split_at(split);
+        for split in 1..(range.len().min(self.data.limit) + 1) {
+            let (start, end) = (range.start, range.end);
+            let (prefix, suffix) = self.text[start..end].split_at(split);
+            let split = start + split;
+
             let prefix_score = self.data.score(prefix, previous).log10();
             let pair = (suffix, prefix);
 
@@ -138,7 +134,7 @@ impl<'a> SegmentState<'a> {
                 Some((score, splits)) => (*score, &self.split_cache[splits.start..splits.end]),
                 None => {
                     let (suffix_score, has_splits) =
-                        self.search(level + 1, start + split, &suffix, Some(prefix));
+                        self.search(level + 1, split..end, Some(prefix));
                     let start = self.split_cache.len();
                     self.split_cache.extend(if has_splits {
                         &self.best[level + 1][..]
@@ -156,7 +152,7 @@ impl<'a> SegmentState<'a> {
                 best = score;
                 let splits = &mut self.best[level];
                 splits.clear();
-                splits.push(start + split);
+                splits.push(split);
                 splits.extend(suffix_splits);
             }
         }
