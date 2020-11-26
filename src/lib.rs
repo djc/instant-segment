@@ -79,6 +79,7 @@ struct SegmentState<'a> {
     memo: HashMap<(&'a str, &'a str), (f64, Range<usize>)>,
     split_cache: Vec<usize>,
     result: &'a mut Vec<String>,
+    best: Vec<Vec<usize>>,
 }
 
 impl<'a> SegmentState<'a> {
@@ -89,6 +90,7 @@ impl<'a> SegmentState<'a> {
             memo: HashMap::new(),
             split_cache: Vec::new(),
             result,
+            best: vec![vec![]; SEGMENT_SIZE],
         }
     }
 
@@ -98,11 +100,12 @@ impl<'a> SegmentState<'a> {
         loop {
             end = self.text.len().min(end + SEGMENT_SIZE);
             let prefix = &self.text[start..end];
-            let window_splits = self.search(&prefix, None).1;
-
-            for split in &window_splits[..window_splits.len().saturating_sub(5)] {
-                self.result.push(self.text[start..start + split].into());
-                start += split;
+            if self.search(0, &prefix, None).1 {
+                let splits = &self.best[0];
+                for split in &splits[..splits.len().saturating_sub(5)] {
+                    self.result.push(self.text[start..start + split].into());
+                    start += split;
+                }
             }
 
             if end == self.text.len() {
@@ -110,20 +113,21 @@ impl<'a> SegmentState<'a> {
             }
         }
 
-        let window_splits = self.search(&self.text[start..], None).1;
-        for split in window_splits {
-            self.result.push(self.text[start..start + split].into());
-            start += split;
+        if self.search(0, &self.text[start..], None).1 {
+            for split in &self.best[0] {
+                self.result.push(self.text[start..start + split].into());
+                start += split;
+            }
         }
     }
 
     /// Score `word` in the context of `previous` word
-    fn search(&mut self, text: &'a str, previous: Option<&str>) -> (f64, Vec<usize>) {
+    fn search(&mut self, level: usize, text: &'a str, previous: Option<&str>) -> (f64, bool) {
         if text.is_empty() {
-            return (0.0, vec![]);
+            return (0.0, false);
         }
 
-        let mut best = (f64::MIN, vec![]);
+        let mut best = f64::MIN;
         for split in 1..(text.len().min(self.data.limit) + 1) {
             let (prefix, suffix) = text.split_at(split);
             let prefix_score = self.data.score(prefix, previous).log10();
@@ -132,9 +136,13 @@ impl<'a> SegmentState<'a> {
             let (suffix_score, suffix_splits) = match self.memo.get(&pair) {
                 Some((score, splits)) => (*score, &self.split_cache[splits.start..splits.end]),
                 None => {
-                    let (suffix_score, suffix_splits) = self.search(&suffix, Some(prefix));
+                    let (suffix_score, has_splits) = self.search(level + 1, &suffix, Some(prefix));
                     let start = self.split_cache.len();
-                    self.split_cache.extend(&suffix_splits);
+                    self.split_cache.extend(if has_splits {
+                        &self.best[level + 1][..]
+                    } else {
+                        &[]
+                    });
                     let end = self.split_cache.len();
                     self.memo.insert(pair, (suffix_score, start..end));
                     (suffix_score, &self.split_cache[start..end])
@@ -142,15 +150,16 @@ impl<'a> SegmentState<'a> {
             };
 
             let score = prefix_score + suffix_score;
-            if score > best.0 {
-                best.0 = score;
-                best.1.clear();
-                best.1.push(split);
-                best.1.extend(suffix_splits);
+            if score > best {
+                best = score;
+                let splits = &mut self.best[level];
+                splits.clear();
+                splits.push(split);
+                splits.extend(suffix_splits);
             }
         }
 
-        best
+        (best, true)
     }
 }
 
