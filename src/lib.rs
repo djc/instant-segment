@@ -76,7 +76,7 @@ impl Segmenter {
 struct SegmentState<'a> {
     data: &'a Segmenter,
     text: &'a Ascii,
-    memo: HashMap<(Range<usize>, Range<usize>), (f64, Range<usize>)>,
+    memo: HashMap<MemoKey, (f64, Range<usize>)>,
     split_cache: Vec<usize>,
     result: &'a mut Vec<String>,
     best: Vec<Vec<usize>>,
@@ -154,6 +154,8 @@ impl<'a> SegmentState<'a> {
         best
     }
 }
+
+type MemoKey = (Range<usize>, Range<usize>);
 
 struct Ascii(Vec<u8>);
 
