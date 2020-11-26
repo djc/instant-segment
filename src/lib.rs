@@ -100,7 +100,7 @@ impl<'a> SegmentState<'a> {
         while end < self.text.len() {
             end = self.text.len().min(end + SEGMENT_SIZE);
             let prefix = &self.text[start..end];
-            if !self.search(0, &prefix, None).1 {
+            if !self.search(0, start, &prefix, None).1 {
                 continue;
             }
 
@@ -109,15 +109,21 @@ impl<'a> SegmentState<'a> {
                 splits = &splits[..splits.len().saturating_sub(5)];
             }
 
-            for split in splits {
-                self.result.push(self.text[start..start + split].into());
-                start += split;
+            for &split in splits {
+                self.result.push(self.text[start..split].into());
+                start = split;
             }
         }
     }
 
     /// Score `word` in the context of `previous` word
-    fn search(&mut self, level: usize, text: &'a str, previous: Option<&str>) -> (f64, bool) {
+    fn search(
+        &mut self,
+        level: usize,
+        start: usize,
+        text: &'a str,
+        previous: Option<&str>,
+    ) -> (f64, bool) {
         if text.is_empty() {
             return (0.0, false);
         }
@@ -131,7 +137,8 @@ impl<'a> SegmentState<'a> {
             let (suffix_score, suffix_splits) = match self.memo.get(&pair) {
                 Some((score, splits)) => (*score, &self.split_cache[splits.start..splits.end]),
                 None => {
-                    let (suffix_score, has_splits) = self.search(level + 1, &suffix, Some(prefix));
+                    let (suffix_score, has_splits) =
+                        self.search(level + 1, start + split, &suffix, Some(prefix));
                     let start = self.split_cache.len();
                     self.split_cache.extend(if has_splits {
                         &self.best[level + 1][..]
@@ -149,7 +156,7 @@ impl<'a> SegmentState<'a> {
                 best = score;
                 let splits = &mut self.best[level];
                 splits.clear();
-                splits.push(split);
+                splits.push(start + split);
                 splits.extend(suffix_splits);
             }
         }
