@@ -99,9 +99,7 @@ impl<'a> SegmentState<'a> {
         let (mut start, mut end) = (0, 0);
         while end < self.text.len() {
             end = self.text.len().min(end + SEGMENT_SIZE);
-            if !self.search(0, start..end, None).1 {
-                continue;
-            }
+            self.search(0, start..end, None);
 
             let mut splits = &self.best[0][..];
             if end < self.text.len() {
@@ -116,14 +114,10 @@ impl<'a> SegmentState<'a> {
     }
 
     /// Score `word` in the context of `previous` word
-    fn search(
-        &mut self,
-        level: usize,
-        range: Range<usize>,
-        previous: Option<Range<usize>>,
-    ) -> (f64, bool) {
+    fn search(&mut self, level: usize, range: Range<usize>, previous: Option<Range<usize>>) -> f64 {
         if range.is_empty() {
-            return (0.0, false);
+            self.best[level].clear();
+            return 0.0;
         }
 
         let mut best = f64::MIN;
@@ -136,16 +130,13 @@ impl<'a> SegmentState<'a> {
             let (suffix_score, suffix_splits) = match self.memo.get(&pair) {
                 Some((score, splits)) => (*score, &self.split_cache[splits.start..splits.end]),
                 None => {
-                    let (suffix_score, has_splits) =
-                        self.search(level + 1, split..end, Some(start..split));
+                    let suffix_score = self.search(level + 1, split..end, Some(start..split));
+
                     let start = self.split_cache.len();
-                    self.split_cache.extend(if has_splits {
-                        &self.best[level + 1][..]
-                    } else {
-                        &[]
-                    });
+                    self.split_cache.extend(&self.best[level + 1][..]);
                     let end = self.split_cache.len();
                     self.memo.insert(pair, (suffix_score, start..end));
+
                     (suffix_score, &self.split_cache[start..end])
                 }
             };
@@ -160,7 +151,7 @@ impl<'a> SegmentState<'a> {
             }
         }
 
-        (best, true)
+        best
     }
 }
 
