@@ -97,24 +97,19 @@ impl<'a> SegmentState<'a> {
     /// Returns a list of words that is the best segmentation of `text`
     fn run(mut self) {
         let (mut start, mut end) = (0, 0);
-        loop {
+        while end < self.text.len() {
             end = self.text.len().min(end + SEGMENT_SIZE);
             let prefix = &self.text[start..end];
-            if self.search(0, &prefix, None).1 {
-                let splits = &self.best[0];
-                for split in &splits[..splits.len().saturating_sub(5)] {
-                    self.result.push(self.text[start..start + split].into());
-                    start += split;
-                }
+            if !self.search(0, &prefix, None).1 {
+                continue;
             }
 
-            if end == self.text.len() {
-                break;
+            let mut splits = &self.best[0][..];
+            if end < self.text.len() {
+                splits = &splits[..splits.len().saturating_sub(5)];
             }
-        }
 
-        if self.search(0, &self.text[start..], None).1 {
-            for split in &self.best[0] {
+            for split in splits {
                 self.result.push(self.text[start..start + split].into());
                 start += split;
             }
