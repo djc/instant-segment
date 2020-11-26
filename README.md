@@ -13,7 +13,7 @@ Corpus][corpus], as described by Thorsten Brants and Alex Franz, and [distribute
 Linguistic Data Consortium. Note that this data **"may only be used for linguistic
 education and research"**, so for any other usage you should acquire a different data set.
 
-For the microbenchmark included in this repository, word-segmenters is ~5x faster than
+For the microbenchmark included in this repository, word-segmenters is ~17x faster than
 the Python implementation. Further optimizations are planned -- see the [issues][issues].
 The API has been carefully constructed so that multiple segmentations can share
 the underlying state (mainly the unigram and bigram maps) to allow parallel usage.
