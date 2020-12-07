@@ -1,11 +1,8 @@
-use std::io;
-use std::num::ParseIntError;
 use std::ops::{Index, Range};
 use std::str;
 
 use ahash::AHashMap as HashMap;
 use smartstring::alias::String;
-use thiserror::Error;
 
 #[cfg(feature = "__test_data")]
 pub mod test_data;
@@ -183,22 +180,6 @@ impl Index<Range<usize>> for Ascii {
         let bytes = self.0.index(index);
         // Since `Ascii` can only be instantiated with ASCII characters, this should be safe
         unsafe { str::from_utf8_unchecked(bytes) }
-    }
-}
-
-#[derive(Debug, Error)]
-pub enum ParseError {
-    #[error("I/O error: {0}")]
-    Io(#[from] io::Error),
-    #[error("integer parsing error: {0}")]
-    ParseInt(#[from] ParseIntError),
-    #[error("{0}")]
-    String(String),
-}
-
-impl From<std::string::String> for ParseError {
-    fn from(s: std::string::String) -> Self {
-        ParseError::String(s.into())
     }
 }
 
