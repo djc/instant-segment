@@ -61,7 +61,7 @@ impl Segmenter {
         }
     }
 
-    /// Customize the word length `limit
+    /// Customize the word length `limit`
     pub fn set_limit(&mut self, limit: usize) {
         self.limit = limit;
     }
