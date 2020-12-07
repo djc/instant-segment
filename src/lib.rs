@@ -7,6 +7,7 @@ use smartstring::alias::String;
 #[cfg(feature = "__test_data")]
 pub mod test_data;
 
+/// Central data structure used to calculate word probabilities
 pub struct Segmenter {
     unigrams: HashMap<String, f64>,
     bigrams: HashMap<(String, String), f64>,
