@@ -42,12 +42,12 @@ impl Segmenter {
 
     fn score(&self, word: &str, previous: Option<&str>) -> f64 {
         if let Some(prev) = previous {
-            if let Some(pb) = self.bigrams.get(&(prev.into(), word.into())) {
-                if self.unigrams.get(prev).is_some() {
+            if let Some(bi) = self.bigrams.get(&(prev.into(), word.into())) {
+                if let Some(uni) = self.unigrams.get(prev) {
                     // Conditional probability of the word given the previous
                     // word. The technical name is "stupid backoff" and it's
                     // not a probability distribution but it works well in practice.
-                    return pb / self.total / self.score(prev, None);
+                    return (bi / self.total) / (uni / self.total);
                 }
             }
         }
