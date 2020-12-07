@@ -1,4 +1,3 @@
-use std::error::Error;
 use std::io;
 use std::num::ParseIntError;
 use std::ops::{Index, Range};
@@ -23,17 +22,17 @@ impl Segmenter {
     ///
     /// Note: the `String` types used in this API are defined in the `smartstring` crate. Any
     /// `&str` or `String` can be converted into the `String` used here by calling `into()` on it.
-    pub fn from_iters<U, B>(unigrams: U, bigrams: B) -> Result<Self, Box<dyn Error>>
+    pub fn from_iters<U, B>(unigrams: U, bigrams: B) -> Self
     where
-        U: Iterator<Item = Result<(String, f64), Box<dyn Error>>>,
-        B: Iterator<Item = Result<((String, String), f64), Box<dyn Error>>>,
+        U: Iterator<Item = (String, f64)>,
+        B: Iterator<Item = ((String, String), f64)>,
     {
-        Ok(Self {
-            unigrams: unigrams.collect::<Result<HashMap<_, _>, _>>()?,
-            bigrams: bigrams.collect::<Result<HashMap<_, _>, _>>()?,
+        Self {
+            unigrams: unigrams.collect::<HashMap<_, _>>(),
+            bigrams: bigrams.collect::<HashMap<_, _>>(),
             limit: DEFAULT_LIMIT,
             total: DEFAULT_TOTAL,
-        })
+        }
     }
 
     /// Appends list of words that is the best segmentation of `text` to `out`
