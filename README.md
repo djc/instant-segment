@@ -20,7 +20,7 @@ education and research"**, so for any other usage you should acquire a different
 For the microbenchmark included in this repository, instant-segment is ~17x faster than
 the Python implementation. Further optimizations are planned -- see the [issues][issues].
 The API has been carefully constructed so that multiple segmentations can share
-the underlying state (mainly the unigram and bigram maps) to allow parallel usage.
+the underlying state to allow parallel usage.
 
 [python]: https://github.com/grantjenks/python-wordsegment
 [chapter]: http://norvig.com/ngrams/
