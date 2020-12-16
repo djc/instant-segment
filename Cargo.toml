@@ -1,13 +1,13 @@
 [package]
-name = "word-segmenters"
+name = "instant-segment"
 version = "0.3.1"
 authors = ["Dirkjan Ochtman <dirkjan@ochtman.nl>"]
 edition = "2018"
 license = "Apache-2.0"
 description = "Fast English word segmentation"
-homepage = "https://github.com/InstantDomainSearch/word-segmenters"
-repository = "https://github.com/InstantDomainSearch/word-segmenters"
-documentation = "https://docs.rs/word-segmenters"
+homepage = "https://github.com/InstantDomainSearch/instant-segment"
+repository = "https://github.com/InstantDomainSearch/instant-segment"
+documentation = "https://docs.rs/instant-segment"
 
 [features]
 __test_data = []

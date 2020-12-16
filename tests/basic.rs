@@ -2,7 +2,7 @@
 
 use once_cell::sync::Lazy;
 
-use word_segmenters::Segmenter;
+use instant_segment::Segmenter;
 
 #[test]
 fn test_segment_0() {
@@ -168,4 +168,4 @@ fn assert_segments(s: &[&str]) {
     assert_eq!(cmp, s);
 }
 
-static SEGMENTER: Lazy<Segmenter> = Lazy::new(word_segmenters::test_data::segmenter);
+static SEGMENTER: Lazy<Segmenter> = Lazy::new(instant_segment::test_data::segmenter);
