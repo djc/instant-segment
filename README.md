@@ -3,6 +3,8 @@
 [![Build status](https://github.com/InstantDomainSearch/word-segmenters/workflows/CI/badge.svg)](https://github.com/InstantDomainSearch/word-segmenters/actions?query=workflow%3ACI)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE-APACHE)
 
+## This crate has been renamed. Refer to [instant-segment][instant-segment] for the latest updates.
+
 word-segmenters is a fast Apache-2.0 library for English word segmentation.
 It is based on the Python [wordsegment][python] project written by Grant Jenkins,
 which is in turn based on code from Peter Norvig's chapter [Natural Language
@@ -18,6 +20,7 @@ the Python implementation. Further optimizations are planned -- see the [issues]
 The API has been carefully constructed so that multiple segmentations can share
 the underlying state (mainly the unigram and bigram maps) to allow parallel usage.
 
+[instant-segment]: https://github.com/InstantDomainSearch/instant-segment
 [python]: https://github.com/grantjenks/python-wordsegment
 [chapter]: http://norvig.com/ngrams/
 [book]: http://oreilly.com/catalog/9780596157111/

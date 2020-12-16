@@ -1,3 +1,8 @@
+//! This crate is no longer being updated. Refer to [instant-segment][instant-segment]
+//! for the latest updates.
+//!
+//! [instant-segment]: https://github.com/InstantDomainSearch/instant-segment
+
 use std::ops::{Index, Range};
 use std::str;
 
