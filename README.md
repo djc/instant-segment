@@ -2,6 +2,8 @@
 
 # instant-segment: fast English word segmentation in Rust
 
+[![Documentation](https://docs.rs/instant-segment/badge.svg)](https://docs.rs/instant-segment/)
+[![Crates.io](https://img.shields.io/crates/v/instant-segment.svg)](https://crates.io/crates/instant-segment)
 [![Build status](https://github.com/InstantDomainSearch/instant-segment/workflows/CI/badge.svg)](https://github.com/InstantDomainSearch/instant-segment/actions?query=workflow%3ACI)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE-APACHE)
 
