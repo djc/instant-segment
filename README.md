@@ -1,3 +1,5 @@
+![Cover logo](./cover.svg)
+
 # instant-segment: fast English word segmentation in Rust
 
 [![Build status](https://github.com/InstantDomainSearch/instant-segment/workflows/CI/badge.svg)](https://github.com/InstantDomainSearch/instant-segment/actions?query=workflow%3ACI)
