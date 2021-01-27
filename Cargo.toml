@@ -13,7 +13,7 @@ documentation = "https://docs.rs/instant-segment"
 __test_data = []
 
 [dependencies]
-ahash = "0.6.1"
+ahash = "0.7.0"
 smartstring = "0.2.5"
 
 [dev-dependencies]
