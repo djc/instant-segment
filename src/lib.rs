@@ -6,6 +6,8 @@ use smartstring::alias::String;
 
 #[cfg(feature = "__test_data")]
 pub mod test_data;
+#[cfg(feature = "testcases")]
+pub mod testcases;
 
 /// Central data structure used to calculate word probabilities
 pub struct Segmenter {

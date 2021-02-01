@@ -10,7 +10,8 @@ repository = "https://github.com/InstantDomainSearch/instant-segment"
 documentation = "https://docs.rs/instant-segment"
 
 [features]
-__test_data = []
+__test_data = ["testcases"]
+testcases = []
 
 [dependencies]
 ahash = "0.7.0"

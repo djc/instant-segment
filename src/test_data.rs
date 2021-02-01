@@ -7,6 +7,11 @@ use std::str::FromStr;
 
 use super::Segmenter;
 
+#[test]
+fn test_data() {
+    crate::testcases::run(segmenter());
+}
+
 pub fn segmenter() -> Segmenter {
     let dir = PathBuf::from(format!("{}/data", env!("CARGO_MANIFEST_DIR")));
 
