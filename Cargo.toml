@@ -12,10 +12,12 @@ documentation = "https://docs.rs/instant-segment"
 [features]
 __test_data = ["test-cases"]
 test-cases = []
+with-serde = ["serde", "ahash/serde", "smartstring/serde"]
 
 [dependencies]
 ahash = "0.7.0"
 smartstring = "0.2.5"
+serde = { version = "1.0.123", features = ["derive"], optional = true }
 
 [dev-dependencies]
 bencher = "0.1.5"

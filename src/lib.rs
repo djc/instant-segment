@@ -1,6 +1,8 @@
 use std::ops::{Index, Range};
 use std::str;
 
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 use smartstring::alias::String;
 
 #[cfg(feature = "test-cases")]
@@ -9,6 +11,7 @@ pub mod test_cases;
 pub mod test_data;
 
 /// Central data structure used to calculate word probabilities
+#[cfg_attr(feature = "with-serde", derive(Deserialize, Serialize))]
 pub struct Segmenter {
     unigrams: HashMap<String, f64>,
     bigrams: HashMap<(String, String), f64>,
