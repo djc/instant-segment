@@ -26,9 +26,22 @@ impl Segmenter {
         U: Iterator<Item = (String, f64)>,
         B: Iterator<Item = ((String, String), f64)>,
     {
+        Self::from_maps(unigrams.collect(), bigrams.collect())
+    }
+
+    /// Create `Segmenter` from the given hashmaps (using ahash)
+    ///
+    /// Note: the `String` types used in this API are defined in the `smartstring` crate. Any
+    /// `&str` or `String` can be converted into the `String` used here by calling `into()` on it.
+    /// The `HashMap` type here refers to `std::collections::HashMap` parametrized with the
+    /// `ahash::RandomState`.
+    pub fn from_maps(
+        unigrams: HashMap<String, f64>,
+        bigrams: HashMap<(String, String), f64>,
+    ) -> Self {
         Self {
-            unigrams: unigrams.collect::<HashMap<_, _>>(),
-            bigrams: bigrams.collect::<HashMap<_, _>>(),
+            unigrams,
+            bigrams,
             limit: DEFAULT_LIMIT,
             total: DEFAULT_TOTAL,
         }
