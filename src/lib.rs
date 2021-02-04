@@ -39,11 +39,12 @@ impl Segmenter {
         unigrams: HashMap<String, f64>,
         bigrams: HashMap<(String, String), f64>,
     ) -> Self {
+        let total = unigrams.values().sum();
         Self {
             unigrams,
             bigrams,
             limit: DEFAULT_LIMIT,
-            total: DEFAULT_TOTAL,
+            total,
         }
     }
 
@@ -201,7 +202,6 @@ impl Index<Range<usize>> for Ascii {
 type HashMap<K, V> = std::collections::HashMap<K, V, ahash::RandomState>;
 
 const DEFAULT_LIMIT: usize = 24;
-const DEFAULT_TOTAL: f64 = 1_024_908_267_229.0;
 const SEGMENT_SIZE: usize = 250;
 
 #[cfg(test)]
