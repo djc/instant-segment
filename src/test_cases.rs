@@ -1,13 +1,17 @@
 use crate::Segmenter;
 
 /// Run a segmenter against the built-in test cases
-pub fn run(segmenter: Segmenter) {
+pub fn run(segmenter: &Segmenter) {
     for test in TEST_CASES.iter().copied() {
-        let mut out = Vec::new();
-        segmenter.segment(&test.join(""), &mut out);
-        let cmp = out.iter().map(|s| &*s).collect::<Vec<_>>();
-        assert_eq!(cmp, test);
+        assert_segments(segmenter, test);
     }
+}
+
+pub fn assert_segments(segmenter: &Segmenter, s: &[&str]) {
+    let mut out = Vec::new();
+    segmenter.segment(&s.join(""), &mut out);
+    let cmp = out.iter().map(|s| &*s).collect::<Vec<_>>();
+    assert_eq!(cmp, s);
 }
 
 /// Built-in test cases
