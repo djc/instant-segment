@@ -56,7 +56,7 @@ impl Segmenter {
             Some(p) => p / self.total,
             // Penalize words not found in the unigrams according
             // to their length, a crucial heuristic.
-            None => 10.0 / (self.total * 10.0f64.powf(word.len() as f64)),
+            None => 10.0 / (self.total * 10.0f64.powi(word.len() as i32)),
         }
     }
 
