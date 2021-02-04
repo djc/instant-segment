@@ -5,6 +5,7 @@ pub fn run(segmenter: &Segmenter) {
     for test in TEST_CASES.iter().copied() {
         assert_segments(segmenter, test);
     }
+    assert_segments(segmenter, FAIL);
 }
 
 pub fn assert_segments(segmenter: &Segmenter, s: &[&str]) {
@@ -96,31 +97,33 @@ pub const TEST_CASES: &[&[&str]] = &[
         "nothing", "in", "it", "to", "sit", "down", "on", "or", "to", "eat", "it", "was", "a",
         "hobbit", "hole", "and", "that", "means", "comfort",
     ],
-    &[
-        "far",
-        "out",
-        "in",
-        "the",
-        "uncharted",
-        "backwaters",
-        "of",
-        "the",
-        "unfashionable",
-        "end",
-        "of",
-        "the",
-        "western",
-        "spiral",
-        "arm",
-        "of",
-        "the",
-        "galaxy",
-        "lies",
-        "a",
-        "small",
-        "un",
-        "regarded",
-        "yellow",
-        "sun",
-    ],
+];
+
+/// Incorrectly segmented, since the test data doesn't contain "unregarded"
+const FAIL: &[&str] = &[
+    "far",
+    "out",
+    "in",
+    "the",
+    "uncharted",
+    "backwaters",
+    "of",
+    "the",
+    "unfashionable",
+    "end",
+    "of",
+    "the",
+    "western",
+    "spiral",
+    "arm",
+    "of",
+    "the",
+    "galaxy",
+    "lies",
+    "a",
+    "small",
+    "un",
+    "regarded",
+    "yellow",
+    "sun",
 ];
