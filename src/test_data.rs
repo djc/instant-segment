@@ -9,7 +9,7 @@ use super::Segmenter;
 
 #[test]
 fn test_data() {
-    crate::testcases::run(segmenter());
+    crate::test_cases::run(segmenter());
 }
 
 pub fn segmenter() -> Segmenter {
