@@ -15,6 +15,12 @@ pub fn assert_segments(segmenter: &Segmenter, s: &[&str]) {
     assert_eq!(cmp, s);
 }
 
+pub fn check_segments(segmenter: &Segmenter, s: &[&str]) -> bool {
+    let mut out = Vec::new();
+    segmenter.segment(&s.join(""), &mut out);
+    s == out.iter().map(|s| &*s).collect::<Vec<_>>()
+}
+
 /// Built-in test cases
 ///
 /// These are exposed so that you can test with different data sources.
