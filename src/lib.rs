@@ -1,7 +1,6 @@
 use std::ops::{Index, Range};
 use std::str;
 
-use ahash::AHashMap as HashMap;
 use smartstring::alias::String;
 
 #[cfg(feature = "__test_data")]
@@ -86,7 +85,7 @@ impl<'a> SegmentState<'a> {
         Self {
             data,
             text,
-            memo: HashMap::new(),
+            memo: HashMap::default(),
             split_cache: Vec::new(),
             result,
             best: vec![vec![]; SEGMENT_SIZE],
@@ -185,6 +184,8 @@ impl Index<Range<usize>> for Ascii {
         unsafe { str::from_utf8_unchecked(bytes) }
     }
 }
+
+type HashMap<K, V> = std::collections::HashMap<K, V, ahash::RandomState>;
 
 const DEFAULT_LIMIT: usize = 24;
 const DEFAULT_TOTAL: f64 = 1_024_908_267_229.0;
