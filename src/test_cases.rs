@@ -10,15 +10,17 @@ pub fn run(segmenter: &Segmenter) {
 
 pub fn assert_segments(segmenter: &Segmenter, s: &[&str]) {
     let mut out = Vec::new();
-    segmenter.segment(&s.join(""), &mut out);
+    segmenter.segment(&s.join(""), &mut out).unwrap();
     let cmp = out.iter().map(|s| &*s).collect::<Vec<_>>();
     assert_eq!(cmp, s);
 }
 
 pub fn check_segments(segmenter: &Segmenter, s: &[&str]) -> bool {
     let mut out = Vec::new();
-    segmenter.segment(&s.join(""), &mut out);
-    s == out.iter().map(|s| &*s).collect::<Vec<_>>()
+    match segmenter.segment(&s.join(""), &mut out) {
+        Ok(()) => s == out.iter().map(|s| &*s).collect::<Vec<_>>(),
+        Err(_) => false,
+    }
 }
 
 /// Built-in test cases

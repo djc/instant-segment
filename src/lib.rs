@@ -52,8 +52,11 @@ impl Segmenter {
     }
 
     /// Appends list of words that is the best segmentation of `text` to `out`
-    pub fn segment(&self, text: &str, out: &mut Vec<String>) {
-        SegmentState::new(&Ascii::new(text), &self, out).run()
+    ///
+    /// Requires that the input `text` consists of lowercase ASCII characters only. Otherwise,
+    /// returns `Err(InvalidCharacter)`.
+    pub fn segment(&self, text: &str, out: &mut Vec<String>) -> Result<(), InvalidCharacter> {
+        Ok(SegmentState::new(Ascii::new(text)?, &self, out).run())
     }
 
     fn score(&self, word: &str, previous: Option<&str>) -> f64 {
@@ -90,7 +93,7 @@ impl Segmenter {
 
 struct SegmentState<'a> {
     data: &'a Segmenter,
-    text: &'a Ascii,
+    text: Ascii<'a>,
     memo: HashMap<MemoKey, (f64, Range<usize>)>,
     split_cache: Vec<usize>,
     result: &'a mut Vec<String>,
@@ -98,7 +101,7 @@ struct SegmentState<'a> {
 }
 
 impl<'a> SegmentState<'a> {
-    fn new(text: &'a Ascii, data: &'a Segmenter, result: &'a mut Vec<String>) -> Self {
+    fn new(text: Ascii<'a>, data: &'a Segmenter, result: &'a mut Vec<String>) -> Self {
         Self {
             data,
             text,
@@ -172,19 +175,16 @@ impl<'a> SegmentState<'a> {
 
 type MemoKey = (Range<usize>, Range<usize>);
 
-struct Ascii(Vec<u8>);
+#[derive(Debug)]
+struct Ascii<'a>(&'a [u8]);
 
-impl Ascii {
-    fn new(s: &str) -> Self {
-        Self(
-            s.chars()
-                .filter_map(|c| match c.is_ascii_alphanumeric() {
-                    true => Some(c.to_ascii_lowercase()),
-                    false => None,
-                })
-                .collect::<std::string::String>()
-                .into_bytes(),
-        )
+impl<'a> Ascii<'a> {
+    fn new(s: &'a str) -> Result<Self, InvalidCharacter> {
+        let bytes = s.as_bytes();
+        match bytes.iter().all(|b| b.is_ascii_lowercase()) {
+            true => Ok(Self(bytes)),
+            false => Err(InvalidCharacter),
+        }
     }
 
     fn len(&self) -> usize {
@@ -192,13 +192,24 @@ impl Ascii {
     }
 }
 
-impl Index<Range<usize>> for Ascii {
+impl<'a> Index<Range<usize>> for Ascii<'a> {
     type Output = str;
 
     fn index(&self, index: Range<usize>) -> &Self::Output {
         let bytes = self.0.index(index);
         // Since `Ascii` can only be instantiated with ASCII characters, this should be safe
         unsafe { str::from_utf8_unchecked(bytes) }
+    }
+}
+
+#[derive(Debug)]
+pub struct InvalidCharacter;
+
+impl std::error::Error for InvalidCharacter {}
+
+impl std::fmt::Display for InvalidCharacter {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str("invalid character")
     }
 }
 
@@ -211,7 +222,8 @@ const SEGMENT_SIZE: usize = 250;
 pub mod tests {
     #[test]
     fn test_clean() {
-        let text = super::Ascii::new("Can't buy me love!");
+        super::Ascii::new("Can't buy me love!").unwrap_err();
+        let text = super::Ascii::new("cantbuymelove").unwrap();
         assert_eq!(&text[0..text.len()], "cantbuymelove");
     }
 }
