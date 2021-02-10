@@ -1,23 +1,24 @@
-use crate::Segmenter;
+use crate::{Search, Segmenter};
 
 /// Run a segmenter against the built-in test cases
 pub fn run(segmenter: &Segmenter) {
+    let mut search = Search::default();
     for test in TEST_CASES.iter().copied() {
-        assert_segments(segmenter, test);
+        assert_segments(test, &mut search, segmenter);
     }
-    assert_segments(segmenter, FAIL);
+    assert_segments(FAIL, &mut search, segmenter);
 }
 
-pub fn assert_segments(segmenter: &Segmenter, s: &[&str]) {
+pub fn assert_segments(s: &[&str], search: &mut Search, segmenter: &Segmenter) {
     let mut out = Vec::new();
-    segmenter.segment(&s.join(""), &mut out).unwrap();
+    segmenter.segment(&s.join(""), &mut out, search).unwrap();
     let cmp = out.iter().map(|s| &*s).collect::<Vec<_>>();
     assert_eq!(cmp, s);
 }
 
-pub fn check_segments(segmenter: &Segmenter, s: &[&str]) -> bool {
+pub fn check_segments(s: &[&str], search: &mut Search, segmenter: &Segmenter) -> bool {
     let mut out = Vec::new();
-    match segmenter.segment(&s.join(""), &mut out) {
+    match segmenter.segment(&s.join(""), &mut out, search) {
         Ok(()) => s == out.iter().map(|s| &*s).collect::<Vec<_>>(),
         Err(_) => false,
     }
