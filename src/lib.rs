@@ -51,18 +51,19 @@ impl Segmenter {
         }
     }
 
-    /// Appends list of words that is the best segmentation of `text` to `out`
+    /// Segment the text in `input`
     ///
     /// Requires that the input `text` consists of lowercase ASCII characters only. Otherwise,
     /// returns `Err(InvalidCharacter)`. The `search` parameter contains caches that are used
     /// segmentation; passing it in allows the callers to reuse the cache allocations.
+    ///
+    /// The segmentation result can be retrieved through the `Search::split()` method.
     pub fn segment(
         &self,
-        text: &str,
-        out: &mut Vec<String>,
+        input: &str,
         search: &mut Search,
     ) -> Result<(), InvalidCharacter> {
-        SegmentState::new(Ascii::new(text)?, &self, out, search).run();
+        SegmentState::new(Ascii::new(input)?, &self, search).run();
         Ok(())
     }
 
@@ -101,7 +102,6 @@ impl Segmenter {
 struct SegmentState<'a> {
     data: &'a Segmenter,
     text: Ascii<'a>,
-    result: &'a mut Vec<String>,
     search: &'a mut Search,
 }
 
@@ -109,14 +109,12 @@ impl<'a> SegmentState<'a> {
     fn new(
         text: Ascii<'a>,
         data: &'a Segmenter,
-        result: &'a mut Vec<String>,
         search: &'a mut Search,
     ) -> Self {
         search.clear();
         Self {
             data,
             text,
-            result,
             search,
         }
     }
@@ -134,7 +132,7 @@ impl<'a> SegmentState<'a> {
             }
 
             for &split in splits {
-                self.result.push(self.text[start..split].into());
+                self.search.result.push(self.text[start..split].into());
                 start = split;
             }
         }
@@ -191,6 +189,7 @@ pub struct Search {
     memo: HashMap<MemoKey, (f64, Range<usize>)>,
     split_cache: Vec<usize>,
     best: Vec<Vec<usize>>,
+    result: Vec<String>,
 }
 
 impl Default for Search {
@@ -199,6 +198,7 @@ impl Default for Search {
             memo: HashMap::default(),
             split_cache: Vec::with_capacity(32),
             best: vec![vec![]; SEGMENT_SIZE],
+            result: Vec::new(),
         }
     }
 }
@@ -210,6 +210,12 @@ impl Search {
         for inner in self.best.iter_mut() {
             inner.clear();
         }
+        self.result.clear();
+    }
+
+    /// Get the segmentation result
+    pub fn split(&self) -> impl Iterator<Item = &str> {
+        self.result.iter().map(|v| v.as_str())
     }
 }
 

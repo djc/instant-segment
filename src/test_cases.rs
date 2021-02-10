@@ -10,16 +10,14 @@ pub fn run(segmenter: &Segmenter) {
 }
 
 pub fn assert_segments(s: &[&str], search: &mut Search, segmenter: &Segmenter) {
-    let mut out = Vec::new();
-    segmenter.segment(&s.join(""), &mut out, search).unwrap();
-    let cmp = out.iter().map(|s| &*s).collect::<Vec<_>>();
+    segmenter.segment(&s.join(""), search).unwrap();
+    let cmp = search.split().collect::<Vec<_>>();
     assert_eq!(cmp, s);
 }
 
 pub fn check_segments(s: &[&str], search: &mut Search, segmenter: &Segmenter) -> bool {
-    let mut out = Vec::new();
-    match segmenter.segment(&s.join(""), &mut out, search) {
-        Ok(()) => s == out.iter().map(|s| &*s).collect::<Vec<_>>(),
+    match segmenter.segment(&s.join(""), search) {
+        Ok(()) => s == search.split().collect::<Vec<_>>(),
         Err(_) => false,
     }
 }

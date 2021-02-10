@@ -7,7 +7,6 @@ benchmark_main!(benches);
 
 fn short(bench: &mut Bencher) {
     let segmenter = instant_segment::test_data::segmenter();
-    let mut out = Vec::new();
     let mut search = instant_segment::Search::default();
-    bench.iter(|| segmenter.segment("thisisatest", &mut out, &mut search));
+    bench.iter(|| segmenter.segment("thisisatest", &mut search));
 }
