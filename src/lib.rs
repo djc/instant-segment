@@ -214,7 +214,7 @@ impl Search {
     }
 
     /// Get the segmentation result
-    pub fn split(&self) -> impl Iterator<Item = &str> {
+    pub fn split(&self) -> impl Iterator<Item = &str> + ExactSizeIterator {
         self.result.iter().map(|v| v.as_str())
     }
 }
