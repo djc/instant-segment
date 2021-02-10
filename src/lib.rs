@@ -186,6 +186,7 @@ impl<'a> SegmentState<'a> {
     }
 }
 
+#[derive(Clone)]
 pub struct Search {
     memo: HashMap<MemoKey, (f64, Range<usize>)>,
     split_cache: Vec<usize>,
