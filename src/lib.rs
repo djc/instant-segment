@@ -62,7 +62,8 @@ impl Segmenter {
         out: &mut Vec<String>,
         search: &mut Search,
     ) -> Result<(), InvalidCharacter> {
-        Ok(SegmentState::new(Ascii::new(text)?, &self, out, search).run())
+        SegmentState::new(Ascii::new(text)?, &self, out, search).run();
+        Ok(())
     }
 
     fn score(&self, word: &str, previous: Option<&str>) -> f64 {
