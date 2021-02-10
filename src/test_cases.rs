@@ -10,14 +10,14 @@ pub fn run(segmenter: &Segmenter) {
 }
 
 pub fn assert_segments(s: &[&str], search: &mut Search, segmenter: &Segmenter) {
-    segmenter.segment(&s.join(""), search).unwrap();
-    let cmp = search.split().collect::<Vec<_>>();
+    let words = segmenter.segment(&s.join(""), search).unwrap();
+    let cmp = words.collect::<Vec<_>>();
     assert_eq!(cmp, s);
 }
 
 pub fn check_segments(s: &[&str], search: &mut Search, segmenter: &Segmenter) -> bool {
     match segmenter.segment(&s.join(""), search) {
-        Ok(()) => s == search.split().collect::<Vec<_>>(),
+        Ok(words) => s == words.collect::<Vec<_>>(),
         Err(_) => false,
     }
 }

@@ -56,11 +56,13 @@ impl Segmenter {
     /// Requires that the input `text` consists of lowercase ASCII characters only. Otherwise,
     /// returns `Err(InvalidCharacter)`. The `search` parameter contains caches that are used
     /// segmentation; passing it in allows the callers to reuse the cache allocations.
-    ///
-    /// The segmentation result can be retrieved through the `Search::split()` method.
-    pub fn segment(&self, input: &str, search: &mut Search) -> Result<(), InvalidCharacter> {
+    pub fn segment<'a>(
+        &self,
+        input: &str,
+        search: &'a mut Search,
+    ) -> Result<impl Iterator<Item = &'a str> + ExactSizeIterator, InvalidCharacter> {
         SegmentState::new(Ascii::new(input)?, &self, search).run();
-        Ok(())
+        Ok(search.result.iter().map(|v| v.as_str()))
     }
 
     fn score(&self, word: &str, previous: Option<&str>) -> f64 {
@@ -199,11 +201,6 @@ impl Search {
             inner.clear();
         }
         self.result.clear();
-    }
-
-    /// Get the segmentation result
-    pub fn split(&self) -> impl Iterator<Item = &str> + ExactSizeIterator {
-        self.result.iter().map(|v| v.as_str())
     }
 }
 
