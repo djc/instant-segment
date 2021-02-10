@@ -58,11 +58,7 @@ impl Segmenter {
     /// segmentation; passing it in allows the callers to reuse the cache allocations.
     ///
     /// The segmentation result can be retrieved through the `Search::split()` method.
-    pub fn segment(
-        &self,
-        input: &str,
-        search: &mut Search,
-    ) -> Result<(), InvalidCharacter> {
+    pub fn segment(&self, input: &str, search: &mut Search) -> Result<(), InvalidCharacter> {
         SegmentState::new(Ascii::new(input)?, &self, search).run();
         Ok(())
     }
@@ -106,17 +102,9 @@ struct SegmentState<'a> {
 }
 
 impl<'a> SegmentState<'a> {
-    fn new(
-        text: Ascii<'a>,
-        data: &'a Segmenter,
-        search: &'a mut Search,
-    ) -> Self {
+    fn new(text: Ascii<'a>, data: &'a Segmenter, search: &'a mut Search) -> Self {
         search.clear();
-        Self {
-            data,
-            text,
-            search,
-        }
+        Self { data, text, search }
     }
 
     /// Returns a list of words that is the best segmentation of `text`
