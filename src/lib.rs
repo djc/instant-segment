@@ -15,7 +15,8 @@ pub mod test_data;
 pub struct Segmenter {
     unigrams: HashMap<String, f64>,
     bigrams: HashMap<(String, String), f64>,
-    total: f64,
+    uni_total: f64,
+    bi_total: f64,
     limit: usize,
 }
 
@@ -42,12 +43,12 @@ impl Segmenter {
         unigrams: HashMap<String, f64>,
         bigrams: HashMap<(String, String), f64>,
     ) -> Self {
-        let total = unigrams.values().sum();
         Self {
+            uni_total: unigrams.values().sum(),
+            bi_total: bigrams.values().sum(),
             unigrams,
             bigrams,
             limit: DEFAULT_LIMIT,
-            total,
         }
     }
 
@@ -72,28 +73,23 @@ impl Segmenter {
                     // Conditional probability of the word given the previous
                     // word. The technical name is "stupid backoff" and it's
                     // not a probability distribution but it works well in practice.
-                    return (bi / self.total) / (uni / self.total);
+                    return (bi / self.bi_total) / (uni / self.uni_total);
                 }
             }
         }
 
         match self.unigrams.get(word) {
             // Probability of the given word
-            Some(p) => p / self.total,
+            Some(p) => p / self.uni_total,
             // Penalize words not found in the unigrams according
             // to their length, a crucial heuristic.
-            None => 10.0 / (self.total * 10.0f64.powi(word.len() as i32)),
+            None => 10.0 / (self.uni_total * 10.0f64.powi(word.len() as i32)),
         }
     }
 
     /// Customize the word length `limit`
     pub fn set_limit(&mut self, limit: usize) {
         self.limit = limit;
-    }
-
-    /// Customize the relative score by setting the `total`
-    pub fn set_total(&mut self, total: f64) {
-        self.total = total;
     }
 }
 
