@@ -148,13 +148,18 @@ impl<'a> SegmentState<'a> {
             let previous = previous.clone().map(|range| &self.text[range]);
             let prefix_score = self.data.score(&self.text[start..split], previous).log10();
 
-            let pair = (split..end, start..split);
-            let (suffix_score, suffix_splits) = match self.search.memo.get(&pair) {
+            let key = (
+                (start - self.offset) as u8,
+                (split - self.offset) as u8,
+                (end - self.offset) as u8,
+            );
+
+            let (suffix_score, suffix_splits) = match self.search.memo.get(&key) {
                 Some((score, suffix_splits)) => (*score, *suffix_splits),
                 None => {
                     let suffix_score = self.search(level + 1, split..end, Some(start..split));
                     let suffix_splits = self.search.best[level + 1];
-                    self.search.memo.insert(pair, (suffix_score, suffix_splits));
+                    self.search.memo.insert(key, (suffix_score, suffix_splits));
                     (suffix_score, suffix_splits)
                 }
             };
@@ -175,7 +180,7 @@ impl<'a> SegmentState<'a> {
 
 #[derive(Clone)]
 pub struct Search {
-    memo: HashMap<MemoKey, (f64, BitVec)>,
+    memo: HashMap<(u8, u8, u8), (f64, BitVec)>,
     best: [BitVec; SEGMENT_SIZE],
     result: Vec<String>,
 }
@@ -263,8 +268,6 @@ impl Iterator for Splits {
         next
     }
 }
-
-type MemoKey = (Range<usize>, Range<usize>);
 
 #[derive(Debug)]
 struct Ascii<'a>(&'a [u8]);
