@@ -14,6 +14,7 @@ fn instant_segment(_: Python, m: &PyModule) -> PyResult<()> {
     Ok(())
 }
 
+/// Segmenter holding the word lists
 #[pyclass]
 struct Segmenter {
     inner: instant_segment::Segmenter,
@@ -21,6 +22,10 @@ struct Segmenter {
 
 #[pymethods]
 impl Segmenter {
+    /// Build a segmenter from `unigrams` and `bigrams` iterators
+    ///
+    /// The `unigrams` iterator should yield `(str, float)` items, while the `bigrams`
+    /// iterator should yield `((str, str), float)` items.
     #[new]
     fn new(unigrams: &PyIterator, bigrams: &PyIterator) -> PyResult<Self> {
         let unigrams = unigrams
@@ -68,6 +73,12 @@ impl Segmenter {
         Ok(())
     }
 
+    /// Segment the given str `s`
+    ///
+    /// The `search` object contains buffers used for searching. When the search completes,
+    /// iterate over the `Search` to get the resulting words.
+    ///
+    /// For best performance, reusing `Search` objects is recommended.
     fn segment(&self, s: &str, search: &mut Search) -> PyResult<()> {
         match self.inner.segment(s, &mut search.inner) {
             Ok(_) => {
