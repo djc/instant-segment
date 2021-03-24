@@ -13,7 +13,7 @@ fn test_data() {
 }
 
 pub fn segmenter() -> Segmenter {
-    let dir = PathBuf::from(format!("{}/data", env!("CARGO_MANIFEST_DIR")));
+    let dir = PathBuf::from(format!("{}/../data", env!("CARGO_MANIFEST_DIR")));
 
     let uni_file = dir.join("unigrams.txt");
     let reader = BufReader::new(File::open(&uni_file).unwrap());
