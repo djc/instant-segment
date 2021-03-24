@@ -189,6 +189,11 @@ impl Search {
         }
         self.result.clear();
     }
+
+    #[doc(hidden)]
+    pub fn get(&self, idx: usize) -> Option<&str> {
+        self.result.get(idx).map(|v| v.as_str())
+    }
 }
 
 impl Default for Search {
