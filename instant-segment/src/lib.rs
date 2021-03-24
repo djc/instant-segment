@@ -181,16 +181,6 @@ pub struct Search {
     result: Vec<String>,
 }
 
-impl Default for Search {
-    fn default() -> Self {
-        Self {
-            memo: HashMap::default(),
-            best: [BitVec::default(); SEGMENT_SIZE],
-            result: Vec::new(),
-        }
-    }
-}
-
 impl Search {
     fn clear(&mut self) {
         self.memo.clear();
@@ -198,6 +188,16 @@ impl Search {
             inner.clear();
         }
         self.result.clear();
+    }
+}
+
+impl Default for Search {
+    fn default() -> Self {
+        Self {
+            memo: HashMap::default(),
+            best: [BitVec::default(); SEGMENT_SIZE],
+            result: Vec::new(),
+        }
     }
 }
 
