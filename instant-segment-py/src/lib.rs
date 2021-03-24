@@ -1,3 +1,6 @@
+use std::fs::File;
+use std::io::{BufReader, BufWriter};
+
 use pyo3::exceptions::PyValueError;
 use pyo3::proc_macro::{pyclass, pymethods, pymodule, pyproto};
 use pyo3::types::{PyIterator, PyModule};
@@ -45,6 +48,24 @@ impl Segmenter {
         Ok(Self {
             inner: instant_segment::Segmenter::from_maps(unigrams, bigrams),
         })
+    }
+
+    /// Load a segmenter from the given file name
+    #[staticmethod]
+    fn load(fname: &str) -> PyResult<Self> {
+        let hnsw = bincode::deserialize_from::<_, instant_segment::Segmenter>(
+            BufReader::with_capacity(32 * 1024 * 1024, File::open(fname)?),
+        )
+        .map_err(|e| PyValueError::new_err(format!("deserialization error: {:?}", e)))?;
+        Ok(Self { inner: hnsw })
+    }
+
+    /// Dump the segmenter to the given file name
+    fn dump(&self, fname: &str) -> PyResult<()> {
+        let f = BufWriter::with_capacity(32 * 1024 * 1024, File::create(fname)?);
+        bincode::serialize_into(f, &self.inner)
+            .map_err(|e| PyValueError::new_err(format!("serialization error: {:?}", e)))?;
+        Ok(())
     }
 
     fn segment(&self, s: &str, search: &mut Search) -> PyResult<()> {
