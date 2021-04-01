@@ -13,7 +13,7 @@ crate-type = ["cdylib"]
 [dependencies]
 ahash = "0.7.2"
 bincode = "1.3.2"
-instant-segment = { version = "0.7", path = "../instant-segment", features = ["with-serde"] }
+instant-segment = { version = "0.8", path = "../instant-segment", features = ["with-serde"] }
 pyo3 = { version = "0.13.2", features = ["extension-module"] }
 smartstring = "0.2.6"
 
