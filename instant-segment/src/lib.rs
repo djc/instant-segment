@@ -177,7 +177,7 @@ impl<'a> SegmentState<'a> {
 #[derive(Clone)]
 pub struct Search {
     memo: HashMap<(u8, u8, u8), (f64, BitVec)>,
-    best: [BitVec; SEGMENT_SIZE],
+    best: Box<[BitVec; SEGMENT_SIZE]>,
     result: Vec<String>,
 }
 
@@ -200,7 +200,7 @@ impl Default for Search {
     fn default() -> Self {
         Self {
             memo: HashMap::default(),
-            best: [BitVec::default(); SEGMENT_SIZE],
+            best: Box::new([BitVec::default(); SEGMENT_SIZE]),
             result: Vec::new(),
         }
     }
