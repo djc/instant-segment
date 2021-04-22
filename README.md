@@ -7,6 +7,29 @@
 [![Build status](https://github.com/InstantDomainSearch/instant-segment/workflows/CI/badge.svg)](https://github.com/InstantDomainSearch/instant-segment/actions?query=workflow%3ACI)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE-APACHE)
 
+## Partial examples
+
+### In Python
+
+```python
+segmenter = instant_segment.Segmenter(unigrams(), bigrams())
+search = instant_segment.Search()
+segmenter.segment("instantdomainsearch", search)
+print([word for word in search])
+> ['instant', 'domain', 'search']
+```
+
+### In Rust
+
+```rust
+let segmenter = segmenter();
+let mut search = Search::default();
+let words = segmenter
+    .segment("instantdomainsearch", &mut search)
+    .unwrap();
+println!("{:?}", words.collect::<Vec<&str>>())
+```
+
 Instant Segment is a fast Apache-2.0 library for English word segmentation.
 It is based on the Python [wordsegment][python] project written by Grant Jenkins,
 which is in turn based on code from Peter Norvig's chapter [Natural Language
