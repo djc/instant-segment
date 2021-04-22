@@ -90,6 +90,17 @@ impl Segmenter {
             )),
         }
     }
+
+    /// Returns the sentence's score
+    ///
+    /// Returns the relative probability for the given sentence in the the corpus represented by
+    /// this `Segmenter`. Will return `None` iff given an empty iterator argument.
+    fn sentence_score(&self, words: &PyIterator) -> PyResult<Option<f64>> {
+        let words = words
+            .map(|s| s?.extract::<&str>())
+            .collect::<Result<Vec<_>, _>>()?;
+        Ok(self.inner.sentence_score(words.into_iter()))
+    }
 }
 
 /// Search buffer and result set
