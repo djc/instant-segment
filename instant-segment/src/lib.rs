@@ -73,7 +73,7 @@ impl Segmenter {
     pub fn score_sentence<'a>(&self, mut words: impl Iterator<Item = &'a str>) -> Option<f64> {
         let mut prev = words.next()?;
         let mut score = self.score(prev, None);
-        while let Some(word) = words.next() {
+        for word in words {
             score += self.score(word, Some(prev));
             prev = word;
         }
