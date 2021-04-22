@@ -66,6 +66,20 @@ impl Segmenter {
         Ok(search.result.iter().map(|v| v.as_str()))
     }
 
+    /// Returns the sentence's score
+    ///
+    /// Returns the relative probability for the given sentence in the the corpus represented by
+    /// this `Segmenter`. Will return `None` iff given an empty iterator argument.
+    pub fn sentence_score<'a>(&self, mut words: impl Iterator<Item = &'a str>) -> Option<f64> {
+        let mut prev = words.next()?;
+        let mut score = self.score(prev, None);
+        while let Some(word) = words.next() {
+            score += self.score(word, Some(prev));
+            prev = word;
+        }
+        Some(score)
+    }
+
     fn score(&self, word: &str, previous: Option<&str>) -> f64 {
         if let Some(prev) = previous {
             if let Some(bi) = self.bigrams.get(&(prev.into(), word.into())) {
