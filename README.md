@@ -9,7 +9,7 @@
 
 ## Partial examples
 
-### In Python
+### Python
 
 ```python
 segmenter = instant_segment.Segmenter(unigrams(), bigrams())
@@ -19,10 +19,10 @@ print([word for word in search])
 > ['instant', 'domain', 'search']
 ```
 
-### In Rust
+### Rust
 
 ```rust
-let segmenter = segmenter();
+let segmenter = Segmenter::from_maps(unigrams, bigrams);
 let mut search = Search::default();
 let words = segmenter
     .segment("instantdomainsearch", &mut search)
