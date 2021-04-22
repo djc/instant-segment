@@ -70,7 +70,7 @@ impl Segmenter {
     ///
     /// Returns the relative probability for the given sentence in the the corpus represented by
     /// this `Segmenter`. Will return `None` iff given an empty iterator argument.
-    pub fn sentence_score<'a>(&self, mut words: impl Iterator<Item = &'a str>) -> Option<f64> {
+    pub fn score_sentence<'a>(&self, mut words: impl Iterator<Item = &'a str>) -> Option<f64> {
         let mut prev = words.next()?;
         let mut score = self.score(prev, None);
         while let Some(word) = words.next() {
