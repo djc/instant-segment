@@ -73,7 +73,7 @@ impl Segmenter {
                     // Conditional probability of the word given the previous
                     // word. The technical name is "stupid backoff" and it's
                     // not a probability distribution but it works well in practice.
-                    return (bi / self.bi_total) / (uni / self.uni_total);
+                    return ((bi / self.bi_total) / (uni / self.uni_total)).log10();
                 }
             }
         }
@@ -85,6 +85,7 @@ impl Segmenter {
             // to their length, a crucial heuristic.
             None => 10.0 / (self.uni_total * 10.0f64.powi(word.len() as i32)),
         }
+        .log10()
     }
 
     /// Customize the word length `limit`
@@ -142,7 +143,7 @@ impl<'a> SegmentState<'a> {
         for split in 1..(range.len().min(self.data.limit) + 1) {
             let (start, split, end) = (range.start, range.start + split, range.end);
             let previous = previous.clone().map(|range| &self.text[range]);
-            let prefix_score = self.data.score(&self.text[start..split], previous).log10();
+            let prefix_score = self.data.score(&self.text[start..split], previous);
 
             let key = (
                 (start - self.offset) as u8,
