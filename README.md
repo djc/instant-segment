@@ -60,7 +60,7 @@ instant-segment = "*"
 
 ## Using
 
-Instant Segment works by segmenting a string into words by selecting the splits with the highest probability given a vocabulary of words and their occurances.
+Instant Segment works by segmenting a string into words by selecting the splits with the highest probability given a corpus of words and their occurances.
 
 For instance, provided that `choose` and `spain` occur more frequently than `chooses` and `pain`, Instant Segment can help you split the string `choosespain.com` into [`ChooseSpain.com`](https://instantdomainsearch.com/search/sale?q=choosespain) which more likely matches user intent.
 
@@ -124,6 +124,20 @@ fn main() {
 Play with the examples above to see that different numbers of occurances will influence the results
 
 The example above is succinct but, in practice, you will want to load these words and occurances from a corpus of data like the ones we provide [here](./data). Check out [the](./instant-segment/instant-segment-py/test/test.py) [tests](./instant-segment/instant-segment/src/test_data.rs) to see examples of how you might do that.
+
+## Testing
+
+To run the tests run the following:
+
+```
+cargo t -p instant-segment --all-features
+```
+
+You can also test the python bindings with:
+
+```
+make test-python
+```
 
 [python]: https://github.com/grantjenks/python-wordsegment
 [chapter]: http://norvig.com/ngrams/
