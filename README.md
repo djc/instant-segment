@@ -29,7 +29,7 @@ println!("{:?}", words.collect::<Vec<&str>>())
 ```
 
 Instant Segment is a fast Apache-2.0 library for English word segmentation.
-It is based on the Python [wordsegment][python] project written by Grant Jenkins,
+It is based on the Python [wordsegment][python] project written by Grant Jenks,
 which is in turn based on code from Peter Norvig's chapter [Natural Language
 Corpus Data][chapter] from the book [Beautiful Data][book] (Segaran and Hammerbacher, 2009).
 
