@@ -83,7 +83,7 @@ println!("{:?}", words.collect::<Vec<&str>>())
 --> ["instant", "domain", "search"]
 ```
 
-Check out the tests for a more thorough example:
+Check out the tests for more thorough examples:
 [Rust](./instant-segment/src/test_cases.rs),
 [Python](./instant-segment-py/test/test.py)
 
