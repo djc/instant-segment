@@ -4,7 +4,7 @@
 
 [![Documentation](https://docs.rs/instant-segment/badge.svg)](https://docs.rs/instant-segment/)
 [![Crates.io](https://img.shields.io/crates/v/instant-segment.svg)](https://crates.io/crates/instant-segment)
-![PyPI](https://img.shields.io/pypi/v/instant-segment)
+[![PyPI](https://img.shields.io/pypi/v/instant-segment)](https://pypi.org/project/instant-segment/)
 [![Build status](https://github.com/InstantDomainSearch/instant-segment/workflows/CI/badge.svg)](https://github.com/InstantDomainSearch/instant-segment/actions?query=workflow%3ACI)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE-APACHE)
 
@@ -32,12 +32,12 @@ with the highest probability given a corpus of words and their occurrences.
 
 For instance, provided that `choose` and `spain` occur more frequently than
 `chooses` and `pain`, and that the pair `choose spain` occurs more frequently
-than `chooses pain`, Instant Segment can help you split the string
-`choosespain.com` into `ChooseSpain.com` which more likely matches user intent.
+than `chooses pain`, Instant Segment can help identify the domain
+`choosespain.com` as `ChooseSpain.com` which more likely matches user intent.
 
 We use this technique at
 [Instant Domain Search](https://instantdomainsearch.com/search/sale?q=choosespain)
-to do just this.
+to help our users find relevant domains.
 
 ## Using the library
 
