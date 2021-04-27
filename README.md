@@ -57,7 +57,9 @@ instant-segment = "0.8.1"
 ### Examples
 
 The following examples expect `unigrams` and `bigrams` to exist. See the
-[examples](./examples) to see how to construct these objects.
+examples ([Rust](./instant-segment/examples/contrived.rs),
+[Python](./instant-segment-py/examples/contrived.py)) to see how to construct
+these objects.
 
 ```python
 import instant_segment
@@ -71,7 +73,8 @@ print([word for word in search])
 ```
 
 ```rust
-use instant_segment::{Search, Segmenter}; use std::collections::HashMap;
+use instant_segment::{Search, Segmenter};
+use std::collections::HashMap;
 
 let segmenter = Segmenter::from_maps(unigrams, bigrams);
 let mut search = Search::default();
