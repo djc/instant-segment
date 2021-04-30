@@ -2,3 +2,5 @@
 Cargo.lock
 *.so
 __pycache__
+.DS_Store
+/data/cache
