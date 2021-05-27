@@ -20,7 +20,7 @@ Corpus][corpus], as described by Thorsten Brants and Alex Franz, and
 data **"may only be used for linguistic education and research"**, so for any
 other usage you should acquire a different data set.
 
-For the microbenchmark included in this repository, Instant Segment is ~17x
+For the microbenchmark included in this repository, Instant Segment is ~100x
 faster than the Python implementation. Further optimizations are planned -- see
 the [issues][issues]. The API has been carefully constructed so that multiple
 segmentations can share the underlying state to allow parallel usage.
