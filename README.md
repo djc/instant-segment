@@ -21,9 +21,9 @@ data **"may only be used for linguistic education and research"**, so for any
 other usage you should acquire a different data set.
 
 For the microbenchmark included in this repository, Instant Segment is ~100x
-faster than the Python implementation. Further optimizations are planned -- see
-the [issues][issues]. The API has been carefully constructed so that multiple
-segmentations can share the underlying state to allow parallel usage.
+faster than the Python implementation. The API has been carefully constructed
+so that multiple segmentations can share the underlying state to allow parallel
+usage.
 
 ## How it works
 
