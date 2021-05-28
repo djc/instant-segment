@@ -1,10 +1,15 @@
 [package]
 name = "instant-segment-py"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Dirkjan Ochtman <dirkjan@ochtman.nl>"]
 edition = "2018"
 license = "Apache-2.0"
 workspace = ".."
+description = "Fast English word segmentation"
+homepage = "https://github.com/InstantDomainSearch/instant-segment"
+repository = "https://github.com/InstantDomainSearch/instant-segment"
+documentation = "https://docs.rs/instant-segment"
+readme = "../README.md"
 
 [lib]
 name = "instant_segment"
