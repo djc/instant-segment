@@ -23,6 +23,7 @@ serde = { version = "1.0.123", features = ["derive"], optional = true }
 [dev-dependencies]
 bencher = "0.1.5"
 once_cell = "1.4"
+rayon = "1.5.1"
 
 [[bench]]
 name = "bench"
