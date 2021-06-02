@@ -16,7 +16,7 @@ pub fn segmenter() -> Segmenter {
     let dir = PathBuf::from(format!("{}/../data", env!("CARGO_MANIFEST_DIR")));
     let mut ln = String::new();
 
-    let uni_file = dir.join("unigrams.txt");
+    let uni_file = dir.join("en-unigrams.txt");
     let mut reader = BufReader::new(File::open(&uni_file).unwrap());
     let mut i = 0;
     let mut unigrams = HashMap::default();
@@ -33,7 +33,7 @@ pub fn segmenter() -> Segmenter {
         ln.clear();
     }
 
-    let bi_file = dir.join("bigrams.txt");
+    let bi_file = dir.join("en-bigrams.txt");
     let mut reader = BufReader::new(File::open(&bi_file).unwrap());
     let mut i = 0;
     let mut bigrams = HashMap::default();
