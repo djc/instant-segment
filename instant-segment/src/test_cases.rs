@@ -7,7 +7,11 @@ pub fn run(segmenter: &Segmenter) {
     for test in TEST_CASES.iter().copied() {
         success &= assert_segments(test, &mut search, segmenter);
     }
-    success &= assert_segments(FAIL, &mut search, segmenter);
+
+    for test in FAILED.iter().copied() {
+        success &= assert_segments(test, &mut search, segmenter);
+    }
+
     assert!(success);
 }
 
@@ -83,9 +87,52 @@ pub const TEST_CASES: &[&[&str]] = &[
         "foolishness",
     ],
     &[
+        "in", "a", "hole", "in", "the", "ground", "there", "lived", "a", "hobbit", "not", "a",
+        "nasty", "dirty", "wet", "hole", "filled", "with", "the", "ends", "of", "worms", "and",
+        "an", "oozy", "smell", "nor", "yet", "a", "dry", "bare", "sandy", "hole", "with",
+        "nothing", "in", "it", "to", "sit", "down", "on", "or", "to", "eat", "it", "was", "a",
+        "hobbit", "hole", "and", "that", "means", "comfort",
+    ],
+];
+
+/// Incorrectly segmented test cases
+const FAILED: &[&[&str]] = &[
+    &[
+        // The SCOWL word list (at size 60) data does not contain "unregarded"
+        "far",
+        "out",
+        "in",
+        "the",
+        "uncharted",
+        "backwaters",
+        "of",
+        "the",
+        "unfashionable",
+        "end",
+        "of",
+        "the",
+        "western",
+        "spiral",
+        "arm",
+        "of",
+        "the",
+        "galaxy",
+        "lies",
+        "a",
+        "small",
+        "un",
+        "regarded",
+        "yellow",
+        "sun",
+    ],
+    &[
+        // The SCOWL word list (at size 60) does not contain "gregor"
         "as",
-        "gregor",
-        "samsa",
+        "greg",
+        "or",
+        "sam",
+        "s",
+        "a",
         "awoke",
         "one",
         "morning",
@@ -104,40 +151,4 @@ pub const TEST_CASES: &[&[&str]] = &[
         "gigantic",
         "insect",
     ],
-    &[
-        "in", "a", "hole", "in", "the", "ground", "there", "lived", "a", "hobbit", "not", "a",
-        "nasty", "dirty", "wet", "hole", "filled", "with", "the", "ends", "of", "worms", "and",
-        "an", "oozy", "smell", "nor", "yet", "a", "dry", "bare", "sandy", "hole", "with",
-        "nothing", "in", "it", "to", "sit", "down", "on", "or", "to", "eat", "it", "was", "a",
-        "hobbit", "hole", "and", "that", "means", "comfort",
-    ],
-];
-
-/// Incorrectly segmented, since the test data doesn't contain "unregarded"
-const FAIL: &[&str] = &[
-    "far",
-    "out",
-    "in",
-    "the",
-    "uncharted",
-    "backwaters",
-    "of",
-    "the",
-    "unfashionable",
-    "end",
-    "of",
-    "the",
-    "western",
-    "spiral",
-    "arm",
-    "of",
-    "the",
-    "galaxy",
-    "lies",
-    "a",
-    "small",
-    "un",
-    "regarded",
-    "yellow",
-    "sun",
 ];
