@@ -9,11 +9,10 @@ use super::{HashMap, Segmenter};
 
 #[test]
 fn test_data() {
-    crate::test_cases::run(&segmenter());
+    crate::test_cases::run(&segmenter(crate_data_dir()));
 }
 
-pub fn segmenter() -> Segmenter {
-    let dir = PathBuf::from(format!("{}/../data", env!("CARGO_MANIFEST_DIR")));
+pub fn segmenter(dir: PathBuf) -> Segmenter {
     let mut ln = String::new();
 
     let uni_file = dir.join("en-unigrams.txt");
@@ -58,4 +57,8 @@ pub fn segmenter() -> Segmenter {
     }
 
     Segmenter::from_maps(unigrams, bigrams)
+}
+
+pub fn crate_data_dir() -> PathBuf {
+    PathBuf::from(format!("{}/../data", env!("CARGO_MANIFEST_DIR")))
 }
