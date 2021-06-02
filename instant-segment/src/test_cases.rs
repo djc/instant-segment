@@ -3,16 +3,23 @@ use crate::{Search, Segmenter};
 /// Run a segmenter against the built-in test cases
 pub fn run(segmenter: &Segmenter) {
     let mut search = Search::default();
+    let mut success = true;
     for test in TEST_CASES.iter().copied() {
-        assert_segments(test, &mut search, segmenter);
+        success &= assert_segments(test, &mut search, segmenter);
     }
-    assert_segments(FAIL, &mut search, segmenter);
+    success &= assert_segments(FAIL, &mut search, segmenter);
+    assert!(success);
 }
 
-pub fn assert_segments(s: &[&str], search: &mut Search, segmenter: &Segmenter) {
+pub fn assert_segments(s: &[&str], search: &mut Search, segmenter: &Segmenter) -> bool {
     let words = segmenter.segment(&s.join(""), search).unwrap();
     let cmp = words.collect::<Vec<_>>();
-    assert_eq!(cmp, s);
+    let success = cmp == s;
+    if !success {
+        println!("expected: {:?}", s);
+        println!("actual:   {:?}\n", cmp);
+    }
+    success
 }
 
 pub fn check_segments(s: &[&str], search: &mut Search, segmenter: &Segmenter) -> bool {
