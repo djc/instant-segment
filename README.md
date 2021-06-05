@@ -1,4 +1,4 @@
-![Cover logo](./cover.svg)
+![Cover logo](https://raw.githubusercontent.com/InstantDomain/instant-segment/main/cover.svg)
 
 # Instant Segment: fast English word segmentation in Rust
 
@@ -36,7 +36,7 @@ than `chooses pain`, Instant Segment can help identify the domain
 `choosespain.com` as `ChooseSpain.com` which more likely matches user intent.
 
 We use this technique at
-[Instant Domain Search](https://instantdomainsearch.com/search/sale?q=choosespain)
+[Instant Domain Search](https://instantdomainsearch.com/)
 to help our users find relevant domains.
 
 ## Using the library
