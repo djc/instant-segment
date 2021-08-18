@@ -29,9 +29,9 @@ For instance, provided that `choose` and `spain` occur more frequently than
 than `chooses pain`, Instant Segment can help identify the domain
 `choosespain.com` as `ChooseSpain.com` which more likely matches user intent.
 
-We use this technique at
-[Instant Domain Search](https://instantdomainsearch.com/)
-to help our users find relevant domains.
+Read about [how we built and improved][story] Instant Segment for use in production
+at [Instant Domain Search](https://instantdomainsearch.com/) to help our users
+find relevant domains they can register.
 
 ## Using the library
 
@@ -100,6 +100,7 @@ make test-python
 
 [python]: https://github.com/grantjenks/python-wordsegment
 [chapter]: http://norvig.com/ngrams/
+[story]: https://instantdomainsearch.com/engineering/instant-word-segmentation-with-rust
 [book]: http://oreilly.com/catalog/9780596157111/
 [distributed]: https://catalog.ldc.upenn.edu/LDC2006T13
 [issues]: https://github.com/InstantDomainSearch/instant-segment/issues
