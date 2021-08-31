@@ -2,7 +2,8 @@ name: Publish
 
 on:
   push:
-    tags: ['py-*']
+    tags:
+      - py-*
 
 jobs:
   Publish:
@@ -30,7 +31,6 @@ jobs:
         uses: messense/maturin-action@v1
         with:
           command: publish
-          shell: bash
           args: -m instant-segment-py/Cargo.toml
                 --no-sdist
                 --username __token__
