@@ -1,0 +1,38 @@
+name: Publish
+
+on:
+  push:
+    tags: ['py-*']
+
+jobs:
+  Publish:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python: [3.7, 3.8, 3.9]
+
+    runs-on: ${{ matrix.os }}
+
+    environment: "Publish wheels"
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python }}
+          architecture: x64
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - name: Publish
+        uses: messense/maturin-action@v1
+        with:
+          command: publish
+          shell: bash
+          args: -m instant-segment-py/Cargo.toml
+                --no-sdist
+                --username __token__
+                --password ${{ secrets.MATURIN_PASSWORD }}
+                --interpreter $(python${{ matrix.python }} -V 2>&1 | cut -d ' ' -f 2)
