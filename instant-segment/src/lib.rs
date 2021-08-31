@@ -62,7 +62,7 @@ impl Segmenter {
         input: &str,
         search: &'a mut Search,
     ) -> Result<impl Iterator<Item = &'a str> + ExactSizeIterator, InvalidCharacter> {
-        SegmentState::new(Ascii::new(input)?, &self, search).run();
+        SegmentState::new(Ascii::new(input)?, self, search).run();
         Ok(search.result.iter().map(|v| v.as_str()))
     }
 
