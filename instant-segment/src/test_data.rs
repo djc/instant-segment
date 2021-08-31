@@ -26,7 +26,7 @@ pub fn segmenter(dir: PathBuf) -> Segmenter {
             .unwrap_or_else(|| panic!("no tab found in {:?}:{}", uni_file, i));
 
         let word = ln[..split].into();
-        let p = usize::from_str(&ln[split + 1..].trim())
+        let p = usize::from_str(ln[split + 1..].trim())
             .unwrap_or_else(|e| panic!("error at {:?}:{}: {}", uni_file, i, e));
         unigrams.insert(word, p as f64);
         ln.clear();
@@ -49,7 +49,7 @@ pub fn segmenter(dir: PathBuf) -> Segmenter {
 
         let word1 = ln[..word_split].into();
         let word2 = ln[word_split + 1..score_split].into();
-        let p = usize::from_str(&ln[score_split + 1..].trim())
+        let p = usize::from_str(ln[score_split + 1..].trim())
             .unwrap_or_else(|e| panic!("error at {:?}:{}: {}", bi_file, i, e));
 
         bigrams.insert((word1, word2), p as f64);
