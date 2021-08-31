@@ -5,7 +5,7 @@
 [![Documentation](https://docs.rs/instant-segment/badge.svg)](https://docs.rs/instant-segment/)
 [![Crates.io](https://img.shields.io/crates/v/instant-segment.svg)](https://crates.io/crates/instant-segment)
 [![PyPI](https://img.shields.io/pypi/v/instant-segment)](https://pypi.org/project/instant-segment/)
-[![Build status](https://github.com/InstantDomainSearch/instant-segment/workflows/CI/badge.svg)](https://github.com/InstantDomainSearch/instant-segment/actions?query=workflow%3ACI)
+[![Build status](https://github.com/InstantDomain/instant-segment/workflows/CI/badge.svg)](https://github.com/InstantDomain/instant-segment/actions?query=workflow%3ACI)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE-APACHE)
 
 Instant Segment is a fast Apache-2.0 library for English word segmentation. It
@@ -103,4 +103,4 @@ make test-python
 [story]: https://instantdomainsearch.com/engineering/instant-word-segmentation-with-rust
 [book]: http://oreilly.com/catalog/9780596157111/
 [distributed]: https://catalog.ldc.upenn.edu/LDC2006T13
-[issues]: https://github.com/InstantDomainSearch/instant-segment/issues
+[issues]: https://github.com/InstantDomain/instant-segment/issues
