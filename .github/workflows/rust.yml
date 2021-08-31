@@ -35,6 +35,24 @@ jobs:
           command: test
           args: -p instant-segment --all-features
 
+  test-python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: -p instant-segment-py --release
+      - name: Test Python bindings
+        run: |
+          cp target/release/libinstant_segment.so instant-segment-py/test/instant_segment.so
+          PYTHONPATH=instant-segment-py/test/ python3 -m test
+
   lint:
     runs-on: ubuntu-latest
     steps:
