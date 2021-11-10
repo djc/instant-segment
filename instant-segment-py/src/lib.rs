@@ -2,9 +2,9 @@ use std::fs::File;
 use std::io::{BufReader, BufWriter};
 
 use pyo3::exceptions::PyValueError;
-use pyo3::proc_macro::{pyclass, pymethods, pymodule, pyproto};
+use pyo3::proc_macro::{pyclass, pymethods, pymodule};
 use pyo3::types::{PyIterator, PyModule};
-use pyo3::{PyErr, PyIterProtocol, PyRef, PyRefMut, PyResult, Python};
+use pyo3::{PyErr, PyRef, PyRefMut, PyResult, Python};
 use smartstring::alias::String as SmartString;
 
 #[pymodule]
@@ -120,10 +120,7 @@ impl Search {
             cur: None,
         }
     }
-}
 
-#[pyproto]
-impl PyIterProtocol for Search {
     fn __iter__(slf: PyRef<Self>) -> PyRef<Self> {
         slf
     }
