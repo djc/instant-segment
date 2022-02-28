@@ -167,7 +167,7 @@ impl<'a> SegmentState<'a> {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Search {
     candidates: Vec<Candidate>,
     result: Vec<String>,
@@ -182,15 +182,6 @@ impl Search {
     #[doc(hidden)]
     pub fn get(&self, idx: usize) -> Option<&str> {
         self.result.get(idx).map(|v| v.as_str())
-    }
-}
-
-impl Default for Search {
-    fn default() -> Self {
-        Self {
-            candidates: Vec::new(),
-            result: Vec::new(),
-        }
     }
 }
 
