@@ -167,6 +167,7 @@ impl<'a> SegmentState<'a> {
     }
 }
 
+/// Search state for a [`Segmenter`]
 #[derive(Clone, Default)]
 pub struct Search {
     candidates: Vec<Candidate>,
@@ -218,6 +219,7 @@ impl<'a> Index<Range<usize>> for Ascii<'a> {
     }
 }
 
+/// Error returned by [`Segmenter::segment`] when given an invalid character
 #[derive(Debug)]
 pub struct InvalidCharacter;
 
