@@ -1,7 +1,6 @@
 [package]
 name = "instant-segment-py"
 version = "0.1.4"
-authors = ["Dirkjan Ochtman <dirkjan@ochtman.nl>"]
 edition = "2018"
 license = "Apache-2.0"
 workspace = ".."

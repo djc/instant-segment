@@ -1,7 +1,6 @@
 [package]
 name = "instant-segment"
 version = "0.10.0"
-authors = ["Dirkjan Ochtman <dirkjan@ochtman.nl>"]
 edition = "2018"
 license = "Apache-2.0"
 description = "Fast English word segmentation"
