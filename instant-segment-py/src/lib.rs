@@ -1,3 +1,6 @@
+// borrow_deref_ref doesn't get macro detection right, allow for now
+#![allow(clippy::from_iter_instead_of_collect, clippy::borrow_deref_ref)]
+
 use std::fs::File;
 use std::io::{BufReader, BufWriter};
 
