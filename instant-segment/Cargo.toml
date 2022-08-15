@@ -16,7 +16,7 @@ test-cases = []
 with-serde = ["serde", "ahash/serde", "smartstring/serde"]
 
 [dependencies]
-ahash = "0.7.0"
+ahash = "0.8"
 smartstring = "1"
 serde = { version = "1.0.123", features = ["derive"], optional = true }
 
