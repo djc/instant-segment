@@ -5,13 +5,14 @@ use std::fs::File;
 use std::io::{BufReader, BufWriter};
 
 use pyo3::exceptions::PyValueError;
-use pyo3::proc_macro::{pyclass, pymethods, pymodule};
 use pyo3::types::{PyIterator, PyModule};
+use pyo3::{pyclass, pymethods, pymodule};
 use pyo3::{PyErr, PyRef, PyRefMut, PyResult, Python};
 use smartstring::alias::String as SmartString;
 
 #[pymodule]
-fn instant_segment(_: Python, m: &PyModule) -> PyResult<()> {
+#[pyo3(name = "instant_segment")]
+fn instant_segment_py(_: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<Search>()?;
     m.add_class::<Segmenter>()?;
     Ok(())
