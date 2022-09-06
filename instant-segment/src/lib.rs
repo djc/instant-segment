@@ -247,7 +247,7 @@ pub mod tests {
         Ascii::new("Can't buy me love!").unwrap_err();
         let text = Ascii::new("cantbuymelove").unwrap();
         assert_eq!(&text[0..text.len()], "cantbuymelove");
-        let text_with_numbers = Ascii::new("c4ntbuym3love").unwrap();
-        assert_eq!(&text_with_numbers[0..text_with_numbers.len()], "c4ntbuym3love");
+        let text_with_numbers = Ascii::new("c4ntbuym3l0v3").unwrap();
+        assert_eq!(&text_with_numbers[0..text_with_numbers.len()], "c4ntbuym3l0v3");
     }
 }
