@@ -198,7 +198,12 @@ struct Ascii<'a>(&'a [u8]);
 impl<'a> Ascii<'a> {
     fn new(s: &'a str) -> Result<Self, InvalidCharacter> {
         let bytes = s.as_bytes();
-        match bytes.iter().all(|b| b.is_ascii_lowercase()) {
+
+        let valid = bytes
+            .iter()
+            .all(|b| b.is_ascii_lowercase() || b.is_ascii_digit());
+
+        match valid {
             true => Ok(Self(bytes)),
             false => Err(InvalidCharacter),
         }
@@ -244,5 +249,10 @@ pub mod tests {
         Ascii::new("Can't buy me love!").unwrap_err();
         let text = Ascii::new("cantbuymelove").unwrap();
         assert_eq!(&text[0..text.len()], "cantbuymelove");
+        let text_with_numbers = Ascii::new("c4ntbuym3l0v3").unwrap();
+        assert_eq!(
+            &text_with_numbers[0..text_with_numbers.len()],
+            "c4ntbuym3l0v3"
+        );
     }
 }
