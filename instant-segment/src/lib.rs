@@ -199,11 +199,11 @@ impl<'a> Ascii<'a> {
     fn new(s: &'a str) -> Result<Self, InvalidCharacter> {
         let bytes = s.as_bytes();
 
-        let iter = bytes
+        let valid = bytes
             .iter()
             .all(|b| b.is_ascii_lowercase() || b.is_ascii_digit());
 
-        match iter {
+        match valid {
             true => Ok(Self(bytes)),
             false => Err(InvalidCharacter),
         }
