@@ -128,7 +128,7 @@ impl<'a> SegmentState<'a> {
                     0 => (None, 0.0),
                     _ => {
                         let prefix = self.search.candidates[split - 1];
-                        let word = &self.text[split - prefix.len as usize..split];
+                        let word = &self.text[split - prefix.len..split];
                         (Some(word), prefix.score)
                     }
                 };
@@ -152,10 +152,10 @@ impl<'a> SegmentState<'a> {
         let mut end = self.text.len();
         let mut best = self.search.candidates[end - 1];
         loop {
-            let word = &self.text[end - best.len as usize..end];
+            let word = &self.text[end - best.len..end];
             self.search.result.push(word.into());
 
-            end -= best.len as usize;
+            end -= best.len;
             if end == 0 {
                 break;
             }
