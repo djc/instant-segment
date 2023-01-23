@@ -25,7 +25,7 @@ fn process_bigrams(word_list: &HashSet<SmartString>) {
         .into_par_iter()
         .map(|part| {
             let fname = format!("data/cache/eng-2-{:05}-{:05}.txt", part, BIGRAM_PARTS);
-            let f = File::open(&fname).unwrap();
+            let f = File::open(fname).unwrap();
             let mut reader = BufReader::with_capacity(4 * 1024 * 1024, f);
 
             let mut ln = String::new();
@@ -124,7 +124,7 @@ fn process_unigrams(word_list: &HashSet<SmartString>) {
         .into_par_iter()
         .map(|part| {
             let fname = format!("data/cache/eng-1-{:05}-{:05}.txt", part, UNIGRAM_PARTS);
-            let f = File::open(&fname).unwrap();
+            let f = File::open(fname).unwrap();
             let mut reader = BufReader::with_capacity(4 * 1024 * 1024, f);
 
             let mut ln = String::new();
