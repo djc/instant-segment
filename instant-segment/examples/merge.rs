@@ -4,12 +4,12 @@
 //! data files from publicly available sources. See the README in `/data`.
 
 use std::cmp::Reverse;
+use std::collections::{HashMap, HashSet};
 use std::fs::File;
 use std::io::Write;
 use std::io::{BufRead, BufReader, BufWriter};
 use std::str::FromStr;
 
-use ahash::{AHashMap as HashMap, AHashSet as HashSet};
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 use smartstring::alias::String as SmartString;
 
