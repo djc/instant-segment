@@ -56,7 +56,7 @@ pub fn segmenter(dir: PathBuf) -> Segmenter {
         ln.clear();
     }
 
-    Segmenter::from_maps(unigrams, bigrams)
+    Segmenter::new(unigrams, bigrams)
 }
 
 pub fn crate_data_dir() -> PathBuf {
