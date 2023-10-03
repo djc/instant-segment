@@ -256,7 +256,7 @@ impl std::fmt::Display for InvalidCharacter {
     }
 }
 
-type HashMap<K, V> = std::collections::HashMap<K, V, ahash::RandomState>;
+type HashMap<K, V> = rustc_hash::FxHashMap<K, V>;
 
 const DEFAULT_LIMIT: usize = 24;
 
