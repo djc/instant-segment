@@ -39,7 +39,7 @@ impl Segmenter {
                 let val = item.get_item(1)?.extract::<f64>()?;
                 Ok((SmartString::from(key), val))
             })
-            .collect::<Result<HashMap<_, _>, PyErr>>()?;
+            .collect::<Result<Vec<_>, PyErr>>()?;
 
         let bigrams = bigrams
             .map(|item| {
@@ -52,10 +52,10 @@ impl Segmenter {
                 let val = item.get_item(1)?.extract::<f64>()?;
                 Ok(((SmartString::from(first), SmartString::from(second)), val))
             })
-            .collect::<Result<HashMap<_, _>, PyErr>>()?;
+            .collect::<Result<Vec<_>, PyErr>>()?;
 
         Ok(Self {
-            inner: instant_segment::Segmenter::from_maps(unigrams, bigrams),
+            inner: instant_segment::Segmenter::new(unigrams, bigrams),
         })
     }
 
@@ -148,5 +148,3 @@ impl Search {
         Some(word)
     }
 }
-
-type HashMap<K, V> = std::collections::HashMap<K, V, ahash::RandomState>;

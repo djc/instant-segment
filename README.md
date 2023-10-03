@@ -70,7 +70,7 @@ print([word for word in search])
 use instant_segment::{Search, Segmenter};
 use std::collections::HashMap;
 
-let segmenter = Segmenter::from_maps(unigrams, bigrams);
+let segmenter = Segmenter::new(unigrams, bigrams);
 let mut search = Search::default();
 let words = segmenter
     .segment("instantdomainsearch", &mut search)
