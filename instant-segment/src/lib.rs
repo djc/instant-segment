@@ -15,8 +15,7 @@ pub mod test_data;
 pub struct Segmenter {
     unigrams: HashMap<String, f64>,
     bigrams: HashMap<(String, String), f64>,
-    uni_total: f64,
-    bi_total: f64,
+    uni_total_log10: f64,
     limit: usize,
 }
 
@@ -40,12 +39,19 @@ impl Segmenter {
     /// The `HashMap` type here refers to `std::collections::HashMap` parametrized with the
     /// `ahash::RandomState`.
     pub fn from_maps(
-        unigrams: HashMap<String, f64>,
-        bigrams: HashMap<(String, String), f64>,
+        mut unigrams: HashMap<String, f64>,
+        mut bigrams: HashMap<(String, String), f64>,
     ) -> Self {
+        let uni_total = unigrams.values().sum::<f64>();
+        let bi_total = bigrams.values().sum::<f64>();
+        for uni in unigrams.values_mut() {
+            *uni = (*uni / uni_total).log10();
+        }
+        for bi in bigrams.values_mut() {
+            *bi = (*bi / bi_total).log10();
+        }
         Self {
-            uni_total: unigrams.values().sum(),
-            bi_total: bigrams.values().sum(),
+            uni_total_log10: uni_total.log10(),
             unigrams,
             bigrams,
             limit: DEFAULT_LIMIT,
@@ -91,19 +97,18 @@ impl Segmenter {
                     // Conditional probability of the word given the previous
                     // word. The technical name is "stupid backoff" and it's
                     // not a probability distribution but it works well in practice.
-                    return ((bi / self.bi_total) / (uni / self.uni_total)).log10();
+                    return bi - uni;
                 }
             }
         }
 
         match self.unigrams.get(word) {
             // Probability of the given word
-            Some(p) => p / self.uni_total,
+            Some(uni) => *uni,
             // Penalize words not found in the unigrams according
             // to their length, a crucial heuristic.
-            None => 10.0 / (self.uni_total * 10.0f64.powi(word.len() as i32)),
+            None => 1.0 - self.uni_total_log10 - word.len() as f64,
         }
-        .log10()
     }
 
     /// Customize the word length `limit`
