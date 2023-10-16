@@ -2,6 +2,7 @@
 name = "instant-segment"
 version = "0.10.1"
 edition = "2018"
+rust-version = "1.65"
 license = "Apache-2.0"
 description = "Fast English word segmentation"
 homepage = "https://github.com/InstantDomain/instant-segment"
