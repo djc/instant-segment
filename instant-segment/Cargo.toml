@@ -1,6 +1,6 @@
 [package]
 name = "instant-segment"
-version = "0.10.1"
+version = "0.11.0"
 edition = "2018"
 rust-version = "1.65"
 license = "Apache-2.0"
