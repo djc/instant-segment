@@ -24,24 +24,14 @@ jobs:
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.rust }}
-      - uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: -p instant-segment --all-features --all-targets
-      - uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: -p instant-segment --all-features
+      - run: cargo test -p instant-segment --all-features
 
   test-python:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: dtolnay/rust-toolchain@stable
-      - uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: -p instant-segment-py --release
+      - run: cargo build -p instant-segment-py --release
       - name: Test Python bindings
         run: |
           cp target/release/libinstant_segment.so instant-segment-py/test/instant_segment.so
@@ -54,15 +44,8 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
-      - uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
-      - uses: actions-rs/cargo@v1
-        if: always()
-        with:
-          command: clippy
-          args: --workspace --all-targets --all-features -- -D warnings
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --all-targets --all-features -- -D warnings
 
   audit:
     runs-on: ubuntu-latest
