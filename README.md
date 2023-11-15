@@ -14,7 +14,7 @@ which is in turn based on code from Peter Norvig's chapter [Natural Language
 Corpus Data][chapter] from the book [Beautiful Data][book] (Segaran and
 Hammerbacher, 2009).
 
-For the microbenchmark included in this repository, Instant Segment is ~100x
+For the microbenchmark included in this repository, Instant Segment is ~500x
 faster than the Python implementation. The API was carefully constructed
 so that multiple segmentations can share the underlying state to allow parallel
 usage.
