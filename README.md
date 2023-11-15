@@ -1,4 +1,4 @@
-![Cover logo](./cover.png)
+![Cover logo](./cover.svg)
 
 # Instant Segment: fast English word segmentation in Rust
 
