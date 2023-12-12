@@ -41,6 +41,15 @@ jobs:
           - os: macos-latest
             target: aarch64
             python: "3.11"
+          - os: macos-latest
+            target: x64
+            python: "3.9"
+          - os: macos-latest
+            target: x64
+            python: "3.10"
+          - os: macos-latest
+            target: x64
+            python: "3.11"
 
     runs-on: ${{ matrix.os }}
     steps:
