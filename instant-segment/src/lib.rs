@@ -105,7 +105,21 @@ impl Segmenter {
             Some((uni, bi_scores)) => (uni, bi_scores),
             // Penalize words not found in the unigrams according
             // to their length, a crucial heuristic.
-            None => return 1.0 - self.uni_total_log10 - word.len() as f64,
+            //
+            // In the original presentation non-words are scored as
+            //
+            //    (1.0 - self.uni_total_log10 - word_len)
+            //
+            // However in practice this seems to under-penalize long non-words.  The intuition
+            // behind the variation used here is that it applies this penalty once for each word
+            // there "should" have been in the non-word's place.
+            //
+            // See <https://github.com/instant-labs/instant-segment/issues/53>.
+            None => {
+                let word_len = word.len() as f64;
+                let word_count = word_len / 5.0;
+                return (1.0 - self.uni_total_log10 - word_len) * word_count;
+            }
         };
 
         if let Some(prev) = previous {
