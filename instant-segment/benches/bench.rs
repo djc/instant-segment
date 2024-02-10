@@ -5,7 +5,7 @@ use bencher::{benchmark_group, benchmark_main, Bencher};
 use instant_segment::test_data::{crate_data_dir, segmenter};
 use instant_segment::Search;
 
-benchmark_group!(benches, short, long);
+benchmark_group!(benches, short, long, extra_long);
 benchmark_main!(benches);
 
 fn short(bench: &mut Bencher) {
@@ -22,6 +22,17 @@ fn long(bench: &mut Bencher) {
     bench.iter(|| {
         let _ = segmenter.segment(
             "itwasabrightcolddayinaprilandtheclockswerestrikingthirteen",
+            &mut search,
+        );
+    });
+}
+
+fn extra_long(bench: &mut Bencher) {
+    let segmenter = segmenter(crate_data_dir());
+    let mut search = Search::default();
+    bench.iter(|| {
+        let _ = segmenter.segment(
+"itwasthebestoftimesitwastheworstoftimesitwastheageofwisdomitwastheageoffoolishnessitwastheepochofbeliefitwastheepochofincredulityitwastheseasonoflightitwastheseasonofdarknessitwasthespringofhopeitwasthewinterofdespair",
             &mut search,
         );
     });
