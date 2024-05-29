@@ -77,7 +77,7 @@ impl Segmenter {
         &self,
         input: &str,
         search: &'a mut Search,
-    ) -> Result<impl Iterator<Item = &'a str> + ExactSizeIterator, InvalidCharacter> {
+    ) -> Result<impl ExactSizeIterator<Item = &'a str>, InvalidCharacter> {
         let state = SegmentState::new(Ascii::new(input)?, self, search);
         if !input.is_empty() {
             state.run();
