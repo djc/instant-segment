@@ -1,5 +1,3 @@
-#![cfg(feature = "__test_data")]
-
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::PathBuf;
