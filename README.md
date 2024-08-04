@@ -30,7 +30,7 @@ than `chooses pain`, Instant Segment can help identify the domain
 `choosespain.com` as `ChooseSpain.com` which more likely matches user intent.
 
 Read about [how we built and improved][story] Instant Segment for use in production
-at [Instant Domain Search](https://instantdomains.com/search) to help our users
+at [Instant Domain Search](https://instantdomainsearch.com/) to help our users
 find relevant domains they can register.
 
 ## Using the library
