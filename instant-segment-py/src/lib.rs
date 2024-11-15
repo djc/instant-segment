@@ -34,7 +34,7 @@ impl Segmenter {
     #[new]
     fn new(unigrams: &Bound<'_, PyIterator>, bigrams: &Bound<'_, PyIterator>) -> PyResult<Self> {
         let unigrams = unigrams
-            .iter()?
+            .try_iter()?
             .map(|result| {
                 let item = result?;
                 let key = item.get_item(0)?;
@@ -46,7 +46,7 @@ impl Segmenter {
             .collect::<Result<Vec<_>, PyErr>>()?;
 
         let bigrams = bigrams
-            .iter()?
+            .try_iter()?
             .map(|item| {
                 let item = item?;
 
@@ -108,7 +108,7 @@ impl Segmenter {
     /// this `Segmenter`. Will return `None` iff given an empty iterator argument.
     fn score_sentence(&self, words: &Bound<'_, PyIterator>) -> PyResult<Option<f64>> {
         let words = words
-            .iter()?
+            .try_iter()?
             .map(|result| result?.extract::<PyBackedStr>())
             .collect::<Result<Vec<_>, _>>()?;
         Ok(self.inner.score_sentence(words.iter().map(|s| &**s)))
