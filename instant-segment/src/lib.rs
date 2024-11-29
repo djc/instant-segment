@@ -77,13 +77,14 @@ impl Segmenter {
         &self,
         input: &str,
         search: &'a mut Search,
-    ) -> Result<impl ExactSizeIterator<Item = &'a str>, InvalidCharacter> {
+    ) -> Result<(impl ExactSizeIterator<Item = &'a str>, f64), InvalidCharacter> {
         let state = SegmentState::new(Ascii::new(input)?, self, search);
+        let mut score = 0.0;
         if !input.is_empty() {
-            state.run();
+            score = state.run();
         }
 
-        Ok(search.result.iter().map(|v| v.as_str()))
+        Ok((search.result.iter().map(|v| v.as_str()), score))
     }
 
     /// Returns the sentence's score
@@ -154,7 +155,7 @@ impl<'a> SegmentState<'a> {
         Self { data, text, search }
     }
 
-    fn run(self) {
+    fn run(self) -> f64 {
         for end in 1..=self.text.len() {
             let start = end.saturating_sub(self.data.limit);
             for split in start..end {
@@ -185,6 +186,7 @@ impl<'a> SegmentState<'a> {
 
         let mut end = self.text.len();
         let mut best = self.search.candidates[end - 1];
+        let score = best.score;
         loop {
             let word = &self.text[end - best.len..end];
             self.search.result.push(word.into());
@@ -198,6 +200,7 @@ impl<'a> SegmentState<'a> {
         }
 
         self.search.result.reverse();
+        score
     }
 }
 

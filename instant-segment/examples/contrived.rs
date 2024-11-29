@@ -18,7 +18,7 @@ fn main() {
     let segmenter = Segmenter::new(unigrams, bigrams);
     let mut search = Search::default();
 
-    let words = segmenter.segment("choosespain", &mut search).unwrap();
+    let (words, _score) = segmenter.segment("choosespain", &mut search).unwrap();
 
     println!("{:?}", words.collect::<Vec<&str>>());
 }
