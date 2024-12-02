@@ -3,7 +3,11 @@ use crate::{Search, Segmenter};
 /// Run a segmenter against the built-in test cases
 pub fn run(segmenter: &Segmenter) {
     let mut search = Search::default();
-    assert_eq!(segmenter.segment("", &mut search).unwrap().len(), 0);
+    {
+        let results = segmenter.segment("", &mut search).unwrap();
+        assert_eq!(results.iter().len(), 0);
+        assert_eq!(results.score(), 0.0);
+    }
 
     let mut success = true;
     for test in TEST_CASES.iter().copied() {
@@ -18,8 +22,8 @@ pub fn run(segmenter: &Segmenter) {
 }
 
 pub fn assert_segments(s: &[&str], search: &mut Search, segmenter: &Segmenter) -> bool {
-    let words = segmenter.segment(&s.join(""), search).unwrap();
-    let cmp = words.collect::<Vec<_>>();
+    let results = segmenter.segment(&s.join(""), search).unwrap();
+    let cmp = results.iter().collect::<Vec<_>>();
     let success = cmp == s;
     if !success {
         println!("expected: {:?}", s);
@@ -30,7 +34,7 @@ pub fn assert_segments(s: &[&str], search: &mut Search, segmenter: &Segmenter) -
 
 pub fn check_segments(s: &[&str], search: &mut Search, segmenter: &Segmenter) -> bool {
     match segmenter.segment(&s.join(""), search) {
-        Ok(words) => s == words.collect::<Vec<_>>(),
+        Ok(results) => s == results.iter().collect::<Vec<_>>(),
         Err(_) => false,
     }
 }
