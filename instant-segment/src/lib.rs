@@ -205,6 +205,7 @@ impl<'a> SegmentState<'a> {
 }
 
 /// The result of segmenting a sentence.
+#[derive(Clone, Copy)]
 pub struct Segments<'a> {
     segments: &'a [String],
     score: f64,
@@ -238,6 +239,7 @@ impl<'a> IntoIterator for &Segments<'a> {
 }
 
 /// Iterator over the segmented words of a sentence.
+#[derive(Clone)]
 pub struct SegmentsIter<'a> {
     segments_iter: std::slice::Iter<'a, String>,
 }
