@@ -77,14 +77,14 @@ impl Segmenter {
         &self,
         input: &str,
         search: &'a mut Search,
-    ) -> Result<(impl ExactSizeIterator<Item = &'a str>, f64), InvalidCharacter> {
+    ) -> Result<Segments<'a>, InvalidCharacter> {
         let state = SegmentState::new(Ascii::new(input)?, self, search);
         let mut score = 0.0;
         if !input.is_empty() {
             score = state.run();
         }
 
-        Ok((search.result.iter().map(|v| v.as_str()), score))
+        Ok(Segments::new(search.result.as_slice(), score))
     }
 
     /// Returns the sentence's score
@@ -201,6 +201,58 @@ impl<'a> SegmentState<'a> {
 
         self.search.result.reverse();
         score
+    }
+}
+
+/// The result of segmenting a sentence.
+pub struct Segments<'a> {
+    segments: &'a [String],
+    score: f64,
+}
+
+impl<'a> Segments<'a> {
+    fn new(segments: &'a [String], score: f64) -> Self {
+        Self { segments, score }
+    }
+
+    /// Returns the score of the segmented sentence.
+    pub fn score(&self) -> f64 {
+        self.score
+    }
+
+    /// Returns an iterator over the segmented words of a sentence.
+    pub fn iter(&self) -> SegmentsIter<'a> {
+        SegmentsIter {
+            segments_iter: self.segments.iter(),
+        }
+    }
+}
+
+impl<'a> IntoIterator for &Segments<'a> {
+    type Item = &'a str;
+    type IntoIter = SegmentsIter<'a>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.iter()
+    }
+}
+
+/// Iterator over the segmented words of a sentence.
+pub struct SegmentsIter<'a> {
+    segments_iter: std::slice::Iter<'a, String>,
+}
+
+impl<'a> Iterator for SegmentsIter<'a> {
+    type Item = &'a str;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.segments_iter.next().map(|v| v.as_str())
+    }
+}
+
+impl ExactSizeIterator for SegmentsIter<'_> {
+    fn len(&self) -> usize {
+        self.segments_iter.len()
     }
 }
 
