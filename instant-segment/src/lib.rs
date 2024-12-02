@@ -248,7 +248,7 @@ impl<'a> Ascii<'a> {
     }
 }
 
-impl<'a> Index<Range<usize>> for Ascii<'a> {
+impl Index<Range<usize>> for Ascii<'_> {
     type Output = str;
 
     fn index(&self, index: Range<usize>) -> &Self::Output {
