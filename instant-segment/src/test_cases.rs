@@ -3,7 +3,9 @@ use crate::{Search, Segmenter};
 /// Run a segmenter against the built-in test cases
 pub fn run(segmenter: &Segmenter) {
     let mut search = Search::default();
-    assert_eq!(segmenter.segment("", &mut search).unwrap().len(), 0);
+    let segments = segmenter.segment("", &mut search).unwrap();
+    assert_eq!(segments.len(), 0);
+    assert_eq!(segments.score(), 0.0);
 
     let mut success = true;
     for test in TEST_CASES.iter().copied() {
