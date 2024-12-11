@@ -77,13 +77,17 @@ impl Segmenter {
         &self,
         input: &str,
         search: &'a mut Search,
-    ) -> Result<impl ExactSizeIterator<Item = &'a str>, InvalidCharacter> {
+    ) -> Result<Segments<'a>, InvalidCharacter> {
         let state = SegmentState::new(Ascii::new(input)?, self, search);
-        if !input.is_empty() {
-            state.run();
-        }
+        let score = match input {
+            "" => 0.0,
+            _ => state.run(),
+        };
 
-        Ok(search.result.iter().map(|v| v.as_str()))
+        Ok(Segments {
+            iter: search.result.iter(),
+            score,
+        })
     }
 
     /// Returns the sentence's score
@@ -139,6 +143,32 @@ impl Segmenter {
     /// Customize the word length `limit`
     pub fn set_limit(&mut self, limit: usize) {
         self.limit = limit;
+    }
+}
+
+pub struct Segments<'a> {
+    iter: std::slice::Iter<'a, String>,
+    score: f64,
+}
+
+impl Segments<'_> {
+    /// Returns the score of the segmented text
+    pub fn score(&self) -> f64 {
+        self.score
+    }
+}
+
+impl<'a> Iterator for Segments<'a> {
+    type Item = &'a str;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.iter.next().map(|v| v.as_str())
+    }
+}
+
+impl ExactSizeIterator for Segments<'_> {
+    fn len(&self) -> usize {
+        self.iter.len()
     }
 }
 
