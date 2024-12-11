@@ -26,6 +26,9 @@ jobs:
           - os: ubuntu-latest
             target: x86_64
             python: "3.12"
+          - os: ubuntu-latest
+            target: x86_64
+            python: "3.13"
           - os: windows-latest
             target: x64
             python: "3.9"
@@ -38,6 +41,9 @@ jobs:
           - os: windows-latest
             target: x64
             python: "3.12"
+          - os: windows-latest
+            target: x64
+            python: "3.13"
           - os: macos-latest
             target: aarch64
             python: "3.9"
@@ -51,6 +57,9 @@ jobs:
             target: aarch64
             python: "3.12"
           - os: macos-latest
+            target: aarch64
+            python: "3.13"
+          - os: macos-latest
             target: x64
             python: "3.9"
           - os: macos-latest
@@ -62,6 +71,9 @@ jobs:
           - os: macos-latest
             target: x64
             python: "3.12"
+          - os: macos-latest
+            target: x64
+            python: "3.13"
 
     runs-on: ${{ matrix.os }}
     steps:
