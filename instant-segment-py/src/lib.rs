@@ -90,11 +90,12 @@ impl Segmenter {
     /// iterate over the `Search` to get the resulting words.
     ///
     /// For best performance, reusing `Search` objects is recommended.
-    fn segment(&self, s: &str, search: &mut Search) -> PyResult<()> {
+    fn segment(&self, s: &str, search: &mut Search) -> PyResult<f64> {
         match self.inner.segment(s, &mut search.inner) {
-            Ok(_) => {
+            Ok(iter) => {
+                let score = iter.score();
                 search.cur = Some(0);
-                Ok(())
+                Ok(score)
             }
             Err(_) => Err(PyValueError::new_err(
                 "only lowercase ASCII letters allowed",

@@ -16,7 +16,8 @@ def bigrams():
 def main():
     segmenter = instant_segment.Segmenter(unigrams(), bigrams())
     search = instant_segment.Search()
-    segmenter.segment('thisisatest', search)
+    score = segmenter.segment('thisisatest', search)
+    print(f"{score=}")
     print([word for word in search])
 
 if __name__ == '__main__':
