@@ -24,7 +24,7 @@ fn process_bigrams(word_list: &HashSet<SmartString>) {
     let bigrams = (0..BIGRAM_PARTS)
         .into_par_iter()
         .map(|part| {
-            let fname = format!("data/cache/eng-2-{:05}-{:05}.txt", part, BIGRAM_PARTS);
+            let fname = format!("data/cache/eng-2-{part:05}-{BIGRAM_PARTS:05}.txt");
             let f = File::open(fname).unwrap();
             let mut reader = BufReader::with_capacity(4 * 1024 * 1024, f);
 
@@ -40,7 +40,7 @@ fn process_bigrams(word_list: &HashSet<SmartString>) {
                 match reader.read_line(&mut ln) {
                     Ok(0) => break,
                     Err(e) => {
-                        eprintln!("error: {:?}", e);
+                        eprintln!("error: {e:?}");
                         break;
                     }
                     _ => {}
@@ -114,7 +114,7 @@ fn process_bigrams(word_list: &HashSet<SmartString>) {
             break;
         }
 
-        writeln!(writer, "{} {}\t{}", left, right, freq).unwrap();
+        writeln!(writer, "{left} {right}\t{freq}").unwrap();
     }
 }
 
@@ -123,7 +123,7 @@ fn process_unigrams(word_list: &HashSet<SmartString>) {
     let unigrams = (0..UNIGRAM_PARTS)
         .into_par_iter()
         .map(|part| {
-            let fname = format!("data/cache/eng-1-{:05}-{:05}.txt", part, UNIGRAM_PARTS);
+            let fname = format!("data/cache/eng-1-{part:05}-{UNIGRAM_PARTS:05}.txt");
             let f = File::open(fname).unwrap();
             let mut reader = BufReader::with_capacity(4 * 1024 * 1024, f);
 
@@ -138,7 +138,7 @@ fn process_unigrams(word_list: &HashSet<SmartString>) {
                 match reader.read_line(&mut ln) {
                     Ok(0) => break,
                     Err(e) => {
-                        eprintln!("error: {:?}", e);
+                        eprintln!("error: {e:?}");
                         break;
                     }
                     _ => {}
@@ -186,7 +186,7 @@ fn process_unigrams(word_list: &HashSet<SmartString>) {
             break;
         }
 
-        writeln!(writer, "{}\t{}", word, freq).unwrap();
+        writeln!(writer, "{word}\t{freq}").unwrap();
     }
 }
 
@@ -212,7 +212,7 @@ fn read_word_list() -> HashSet<SmartString> {
         match reader.read_line(&mut ln) {
             Ok(0) => break,
             Err(e) => {
-                eprintln!("error: {:?}", e);
+                eprintln!("error: {e:?}");
                 break;
             }
             _ => {}

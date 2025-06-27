@@ -24,8 +24,8 @@ pub fn assert_segments(s: &[&str], search: &mut Search, segmenter: &Segmenter) -
     let cmp = words.collect::<Vec<_>>();
     let success = cmp == s;
     if !success {
-        println!("expected: {:?}", s);
-        println!("actual:   {:?}\n", cmp);
+        println!("expected: {s:?}");
+        println!("actual:   {cmp:?}\n");
     }
     success
 }
