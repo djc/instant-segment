@@ -72,7 +72,7 @@ impl Segmenter {
         let hnsw = bincode::deserialize_from::<_, instant_segment::Segmenter>(
             BufReader::with_capacity(32 * 1024 * 1024, File::open(fname)?),
         )
-        .map_err(|e| PyValueError::new_err(format!("deserialization error: {:?}", e)))?;
+        .map_err(|e| PyValueError::new_err(format!("deserialization error: {e:?}")))?;
         Ok(Self { inner: hnsw })
     }
 
@@ -80,7 +80,7 @@ impl Segmenter {
     fn dump(&self, fname: &str) -> PyResult<()> {
         let f = BufWriter::with_capacity(32 * 1024 * 1024, File::create(fname)?);
         bincode::serialize_into(f, &self.inner)
-            .map_err(|e| PyValueError::new_err(format!("serialization error: {:?}", e)))?;
+            .map_err(|e| PyValueError::new_err(format!("serialization error: {e:?}")))?;
         Ok(())
     }
 
