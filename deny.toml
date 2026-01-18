@@ -1,5 +1,18 @@
 [advisories]
 yanked = "deny"
+ignore = [
+  # bincode is unmaintained.
+  #
+  # Per <https://sr.ht/~stygianentity/bincode/>, "Version 1.3.3 is considered a
+  # complete version of bincode that is not in need of any updates."
+  "RUSTSEC-2025-0141",
+]
 
 [licenses]
-allow = ["Apache-2.0", "Apache-2.0 WITH LLVM-exception", "MIT", "MPL-2.0", "Unicode-3.0"]
+allow = [
+  "Apache-2.0",
+  "Apache-2.0 WITH LLVM-exception",
+  "MIT",
+  "MPL-2.0",
+  "Unicode-3.0"
+]
