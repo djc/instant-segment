@@ -1,5 +1,6 @@
 [project]
 name = "instant-segment"
+dynamic = ["version"]
 
 [build-system]
 requires = ["maturin >= 1.0, < 2.0"]
