@@ -16,9 +16,6 @@ jobs:
         include:
           - os: ubuntu-latest
             target: x86_64
-            python: "3.9"
-          - os: ubuntu-latest
-            target: x86_64
             python: "3.10"
           - os: ubuntu-latest
             target: x86_64
@@ -29,9 +26,9 @@ jobs:
           - os: ubuntu-latest
             target: x86_64
             python: "3.13"
-          - os: windows-latest
-            target: x64
-            python: "3.9"
+          - os: ubuntu-latest
+            target: x86_64
+            python: "3.14"
           - os: windows-latest
             target: x64
             python: "3.10"
@@ -44,9 +41,9 @@ jobs:
           - os: windows-latest
             target: x64
             python: "3.13"
-          - os: macos-latest
-            target: aarch64
-            python: "3.9"
+          - os: windows-latest
+            target: x64
+            python: "3.14"
           - os: macos-latest
             target: aarch64
             python: "3.10"
@@ -60,8 +57,8 @@ jobs:
             target: aarch64
             python: "3.13"
           - os: macos-latest
-            target: x64
-            python: "3.9"
+            target: aarch64
+            python: "3.14"
           - os: macos-latest
             target: x64
             python: "3.10"
@@ -74,6 +71,9 @@ jobs:
           - os: macos-latest
             target: x64
             python: "3.13"
+          - os: macos-latest
+            target: x64
+            python: "3.14"
 
     runs-on: ${{ matrix.os }}
     steps:
