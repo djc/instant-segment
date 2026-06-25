@@ -105,27 +105,22 @@ impl Segmenter {
     }
 
     fn score(&self, word: &str, previous: Option<&str>) -> f64 {
-        let (uni, bi_scores) = match self.scores.get(word) {
-            Some((uni, bi_scores)) => (uni, bi_scores),
-            // Penalize words not found in the unigrams according
-            // to their length, a crucial heuristic.
-            //
-            // In the original presentation non-words are scored as
-            //
-            //    (1.0 - self.uni_total_log10 - word_len)
-            //
-            // However in practice this seems to under-penalize long non-words.  The intuition
-            // behind the variation used here is that it applies this penalty once for each word
-            // there "should" have been in the non-word's place.
-            //
-            // See <https://github.com/instant-labs/instant-segment/issues/53>.
-            None => {
-                let word_len = word.len() as f64;
-                let word_count = word_len / 5.0;
-                return (1.0 - self.uni_total_log10 - word_len) * word_count;
-            }
-        };
+        match self.scores.get(word) {
+            Some((uni, bi_scores)) => self.score_found(uni, bi_scores, previous),
+            None => self.score_not_found(word.len()),
+        }
+    }
 
+    /// Score for words found in the dictionary
+    ///
+    /// Most strings are not words: it is helpful to tell the compiler that this is the cold path.
+    #[cold]
+    fn score_found(
+        &self,
+        uni: &f64,
+        bi_scores: &HashMap<String, f64>,
+        previous: Option<&str>,
+    ) -> f64 {
         if let Some(prev) = previous {
             if let Some(bi) = bi_scores.get(prev) {
                 if let Some((uni_prev, _)) = self.scores.get(prev) {
@@ -136,8 +131,27 @@ impl Segmenter {
                 }
             }
         }
-
         *uni
+    }
+
+    /// Score for non-words
+    #[inline(always)]
+    fn score_not_found(&self, word_len: usize) -> f64 {
+        // Penalize words not found in the unigrams according
+        // to their length, a crucial heuristic.
+        //
+        // In the original presentation non-words are scored as
+        //
+        //    (1.0 - self.uni_total_log10 - word_len)
+        //
+        // However in practice this seems to under-penalize long non-words.  The intuition
+        // behind the variation used here is that it applies this penalty once for each word
+        // there "should" have been in the non-word's place.
+        //
+        // See <https://github.com/instant-labs/instant-segment/issues/53>.
+        let word_len = word_len as f64;
+        let word_count = word_len / 5.0;
+        (1.0 - self.uni_total_log10 - word_len) * word_count
     }
 
     /// Customize the word length `limit`
@@ -181,6 +195,7 @@ struct SegmentState<'a> {
 impl<'a> SegmentState<'a> {
     fn new(text: Ascii<'a>, data: &'a Segmenter, search: &'a mut Search) -> Self {
         search.clear();
+        search.candidates.reserve(text.len());
         Self { data, text, search }
     }
 
