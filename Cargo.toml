@@ -1,2 +1,3 @@
 [workspace]
 members = ["instant-segment", "instant-segment-py"]
+resolver = "2"
