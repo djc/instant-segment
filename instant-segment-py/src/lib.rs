@@ -4,12 +4,12 @@
 use std::fs::File;
 use std::io::{BufReader, BufWriter};
 
+use compact_str::CompactString;
 use pyo3::exceptions::PyValueError;
 use pyo3::pybacked::PyBackedStr;
 use pyo3::types::{PyAnyMethods, PyIterator, PyModule, PyModuleMethods};
 use pyo3::{pyclass, pymethods, pymodule, Bound};
 use pyo3::{PyErr, PyRef, PyRefMut, PyResult, Python};
-use smartstring::alias::String as SmartString;
 
 #[pymodule]
 #[pyo3(name = "instant_segment")]
@@ -41,7 +41,7 @@ impl Segmenter {
                 let key = key.extract::<&str>()?;
                 let val = item.get_item(1)?;
                 let val = val.extract::<f64>()?;
-                Ok((SmartString::from(key), val))
+                Ok((CompactString::from(key), val))
             })
             .collect::<Result<Vec<_>, PyErr>>()?;
 
@@ -57,7 +57,10 @@ impl Segmenter {
                 let second = second.extract::<&str>()?;
 
                 let val = item.get_item(1)?.extract::<f64>()?;
-                Ok(((SmartString::from(first), SmartString::from(second)), val))
+                Ok((
+                    (CompactString::from(first), CompactString::from(second)),
+                    val,
+                ))
             })
             .collect::<Result<Vec<_>, PyErr>>()?;
 
