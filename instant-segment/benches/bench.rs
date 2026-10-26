@@ -1,9 +1,9 @@
 #![cfg(feature = "__test_data")]
 
-use bencher::{benchmark_group, benchmark_main, Bencher};
+use bencher::{Bencher, benchmark_group, benchmark_main};
 
-use instant_segment::test_data::{crate_data_dir, segmenter};
 use instant_segment::Search;
+use instant_segment::test_data::{crate_data_dir, segmenter};
 
 benchmark_group!(benches, short, long, extra_long);
 benchmark_main!(benches);
