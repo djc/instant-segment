@@ -8,7 +8,7 @@ use compact_str::CompactString;
 use pyo3::exceptions::PyValueError;
 use pyo3::pybacked::PyBackedStr;
 use pyo3::types::{PyAnyMethods, PyIterator, PyModule, PyModuleMethods};
-use pyo3::{pyclass, pymethods, pymodule, Bound};
+use pyo3::{Bound, pyclass, pymethods, pymodule};
 use pyo3::{PyErr, PyRef, PyRefMut, PyResult, Python};
 
 #[pymodule]
