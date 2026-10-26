@@ -10,8 +10,8 @@ use std::io::Write;
 use std::io::{BufRead, BufReader, BufWriter};
 use std::str::FromStr;
 
+use compact_str::CompactString;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
-use smartstring::alias::String as SmartString;
 
 fn main() {
     let word_list = read_word_list();
@@ -20,7 +20,7 @@ fn main() {
 }
 
 /// Read bigrams from the input file parts, filter them, and write to file
-fn process_bigrams(word_list: &HashSet<SmartString>) {
+fn process_bigrams(word_list: &HashSet<CompactString>) {
     let bigrams = (0..BIGRAM_PARTS)
         .into_par_iter()
         .map(|part| {
@@ -96,7 +96,7 @@ fn process_bigrams(word_list: &HashSet<SmartString>) {
             bigrams
         })
         .reduce(
-            HashMap::<(SmartString, SmartString), usize>::new,
+            HashMap::<(CompactString, CompactString), usize>::new,
             |mut left, right| {
                 for (k, v) in right.into_iter() {
                     *left.entry(k).or_default() += v;
@@ -119,7 +119,7 @@ fn process_bigrams(word_list: &HashSet<SmartString>) {
 }
 
 /// Read unigrams from the input file parts, filter them, and write to file
-fn process_unigrams(word_list: &HashSet<SmartString>) {
+fn process_unigrams(word_list: &HashSet<CompactString>) {
     let unigrams = (0..UNIGRAM_PARTS)
         .into_par_iter()
         .map(|part| {
@@ -170,7 +170,7 @@ fn process_unigrams(word_list: &HashSet<SmartString>) {
             eprintln!("extracted {} unigrams from part {}", unigrams.len(), part);
             unigrams
         })
-        .reduce(HashMap::<SmartString, usize>::new, |mut left, right| {
+        .reduce(HashMap::<CompactString, usize>::new, |mut left, right| {
             for (k, v) in right.into_iter() {
                 *left.entry(k).or_default() += v;
             }
@@ -195,7 +195,7 @@ fn process_unigrams(word_list: &HashSet<SmartString>) {
 /// We use this to filter crappy words out of the (pretty noisy) ngram data.
 /// Considering the way we want to [`normalize()`], we'll filter for
 /// only-letter contents but keep any uppercase characters intact.
-fn read_word_list() -> HashSet<SmartString> {
+fn read_word_list() -> HashSet<CompactString> {
     const AVERAGE_WORD_LIST_LINE_LEN: usize = 9;
 
     let f = File::open("data/cache/eng-wordlist.txt").unwrap();
@@ -240,13 +240,13 @@ fn read_word_list() -> HashSet<SmartString> {
 /// ngram data. For example, the word 'Spain' is usually capitalized, and only
 /// the capitalized version is in the word list. For our purposes though, we
 /// want to operate on lowercased words, so we'll do that after filtering.
-fn normalize(word: &str, list: &HashSet<SmartString>) -> Option<SmartString> {
+fn normalize(word: &str, list: &HashSet<CompactString>) -> Option<CompactString> {
     let word = word.trim();
     if !word.as_bytes().iter().all(|b| b.is_ascii_alphabetic()) || !list.contains(word) {
         return None;
     }
 
-    let mut word = SmartString::from(word);
+    let mut word = CompactString::from(word);
     word.make_ascii_lowercase();
     Some(word)
 }

@@ -1,9 +1,9 @@
 use std::ops::{Index, Range};
 use std::str;
 
+use compact_str::CompactString;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
-use smartstring::alias::String;
 
 #[cfg(feature = "test-cases")]
 pub mod test_cases;
@@ -16,7 +16,7 @@ pub struct Segmenter {
     // Maps a word to both its unigram score, as well has a nested HashMap in
     // which the bigram score can be looked up using the previous word. Scores
     // are base-10 logarithms of relative word frequencies
-    scores: HashMap<String, (f64, HashMap<String, f64>)>,
+    scores: HashMap<CompactString, (f64, HashMap<CompactString, f64>)>,
     // Base-10 logarithm of the total count of unigrams
     uni_total_log10: f64,
     limit: usize,
@@ -24,13 +24,10 @@ pub struct Segmenter {
 
 impl Segmenter {
     /// Create `Segmenter` from the given unigram and bigram counts.
-    ///
-    /// Note: the `String` types used in this API are defined in the `smartstring` crate. Any
-    /// `&str` or `String` can be converted into the `String` used here by calling `into()` on it.
     pub fn new<U, B>(unigrams: U, bigrams: B) -> Self
     where
-        U: IntoIterator<Item = (String, f64)>,
-        B: IntoIterator<Item = ((String, String), f64)>,
+        U: IntoIterator<Item = (CompactString, f64)>,
+        B: IntoIterator<Item = ((CompactString, CompactString), f64)>,
     {
         // Initially, `scores` contains the original unigram and bigram counts
         let mut scores = HashMap::default();
@@ -147,7 +144,7 @@ impl Segmenter {
 }
 
 pub struct Segments<'a> {
-    iter: std::slice::Iter<'a, String>,
+    iter: std::slice::Iter<'a, CompactString>,
     score: f64,
 }
 
@@ -237,7 +234,7 @@ impl<'a> SegmentState<'a> {
 #[derive(Clone, Default)]
 pub struct Search {
     candidates: Vec<Candidate>,
-    result: Vec<String>,
+    result: Vec<CompactString>,
 }
 
 impl Search {

@@ -13,11 +13,11 @@ readme = "../README.md"
 [features]
 __test_data = ["test-cases"]
 test-cases = []
-with-serde = ["serde", "smartstring/serde"]
+with-serde = ["serde", "compact_str/serde"]
 
 [dependencies]
+compact_str = "0.10"
 rustc-hash = "2.0.0"
-smartstring = "1"
 serde = { version = "1.0.123", features = ["derive"], optional = true }
 
 [dev-dependencies]
